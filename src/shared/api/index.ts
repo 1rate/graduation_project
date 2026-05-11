@@ -1,4 +1,4 @@
-export { api } from "./client";
+export { ingestApi, analyticsApi, api } from "./client";
 export { endpoints } from "./endpoints";
 export { queryClient } from "./query";
 export { ApiError } from "./errors";

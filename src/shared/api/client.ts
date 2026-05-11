@@ -69,7 +69,14 @@ class ApiClient {
   }
 }
 
-export const api = new ApiClient({
-  baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000/api/v1",
+export const ingestApi = new ApiClient({
+  baseURL: import.meta.env.VITE_INGEST_API_URL ?? "http://localhost:8080",
+  timeout: 30_000,
+});
+
+export const analyticsApi = new ApiClient({
+  baseURL: import.meta.env.VITE_ANALYTICS_API_URL ?? "http://localhost:8081",
   timeout: 15_000,
 });
+
+export const api = analyticsApi;

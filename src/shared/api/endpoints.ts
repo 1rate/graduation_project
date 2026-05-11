@@ -1,10 +1,3 @@
-/**
- * Фабрика эндпоинтов.
- *
- * В будущем будет генерироваться автоматически из OpenAPI-спек.
- * Пока — ручное объявление с автодополнением.
- */
-
 export const endpoints = {
   auth: {
     login: "/auth/login",
@@ -12,17 +5,25 @@ export const endpoints = {
     refresh: "/auth/refresh",
     logout: "/auth/logout",
   },
-  calls: {
-    list: "/calls",
-    detail: (id: string) => `/calls/${id}`,
-    upload: "/calls/upload",
-    getTranscript: (id: string) => `/calls/${id}/transcript`,
+
+  // Ingest
+  messages: {
+    create: "/api/v1/messages",
   },
+
+  // Search
+  search: {
+    list: "/api/v1/search",
+    detail: (id: string) => `/api/v1/messages/${id}`,
+  },
+
+  // Stats
   stats: {
-    dashboard: "/stats/dashboard",
-    toneBreakdown: "/stats/tone-breakdown",
-    trends: "/stats/trends",
+    sentiment: "/api/v1/stats/sentiment",
+    categories: "/api/v1/stats/categories",
+    timeline: "/api/v1/stats/timeline",
   },
+
   users: {
     me: "/users/me",
     update: "/users/me",

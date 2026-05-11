@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import { DashboardPage, LoginPage, NotFoundPage, RegisterPage } from "@/pages";
+import { DashboardPage, LoginPage, NotFoundPage, RegisterPage, UploadPage } from "@/pages";
 import { AppLayout } from "@/app/AppLayout";
 import { AuthGuard } from "@/app/guards/AuthGuard";
 
@@ -21,8 +21,8 @@ export const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
           { index: true, element: <DashboardPage /> },
-          { path: "upload", element: <DashboardPage /> },
-          { path: "history", element: <DashboardPage /> },
+          { path: "upload", element: <UploadPage /> },
+          { path: "history", element: <UploadPage /> },
           { path: "calls/:id", element: <DashboardPage /> },
           { path: "*", element: <NotFoundPage /> },
         ],
