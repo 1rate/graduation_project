@@ -52,5 +52,12 @@
     "workerDirectory": [
       "public"
     ]
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "msw",
+      "unrs-resolver"
+    ]
   }
 }
