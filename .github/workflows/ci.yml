@@ -33,7 +33,7 @@ jobs:
         run: rm -f pnpm-lock.yaml
 
       - name: Install dependencies
-        run: pnpm install --config.onlyBuiltDependencies=esbuild,msw,unrs-resolver
+        run: pnpm install --ignore-scripts --config.onlyBuiltDependencies=esbuild,msw,unrs-resolver
 
       - name: Type check
         run: pnpm run typecheck
