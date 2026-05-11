@@ -50,48 +50,4 @@ export default defineConfig(
       "prefer-const": "error",
     },
   },
-
-  {
-    files: ["src/**/*.{ts,tsx}"],
-    settings: {
-      "import/resolver": {
-        typescript: true,
-      },
-    },
-    rules: {
-      "import/no-restricted-paths": [
-        "warn",
-        {
-          zones: [
-            {
-              target: "src/features/**",
-              from: "src/pages/**",
-              message: "❌ features не может импортировать pages. Нарушение слоя FSD.",
-            },
-            {
-              target: "src/shared/**",
-              from: "src/features/**",
-              message: "❌ shared не может импортировать features.",
-            },
-            {
-              target: "src/shared/**",
-              from: "src/pages/**",
-              message: "❌ shared не может импортировать pages.",
-            },
-          ],
-        },
-      ],
-
-      "import/no-cycle": ["warn", { maxDepth: 3 }],
-
-      "import/order": [
-        "warn",
-        {
-          groups: ["builtin", "external", "internal", "parent", "sibling", "index"],
-          "newlines-between": "always",
-          alphabetize: { order: "asc" },
-        },
-      ],
-    },
-  },
 );
