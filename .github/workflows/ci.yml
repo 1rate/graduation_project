@@ -27,6 +27,16 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: latest
+          run_install: false
+
+      - name: Approve build scripts
+        run: |
+          echo "${{ github.workspace }}/frontend/.npmrc"
+          cat <<EOF >> .npmrc
+          onlyBuiltDependencies[]=esbuild
+          onlyBuiltDependencies[]=msw
+          onlyBuiltDependencies[]=unrs-resolver
+          EOF
 
       - name: Install dependencies
         run: pnpm install
