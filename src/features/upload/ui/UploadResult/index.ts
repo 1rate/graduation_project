@@ -1,1 +1,0 @@
-export { UploadResult } from "./UploadResult";
