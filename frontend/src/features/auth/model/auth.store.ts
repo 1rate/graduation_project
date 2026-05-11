@@ -1,5 +1,5 @@
+import type { AuthResponse, LoginPayload, RegisterPayload } from "@/features/auth/model/auth.types";
 import { api, endpoints } from "@/shared/api";
-import { LoginPayload, AuthResponse, RegisterPayload } from "./auth.types";
 
 export const authApi = {
   login: (data: LoginPayload) => api.post<AuthResponse>(endpoints.auth.login, data),

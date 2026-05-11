@@ -151,7 +151,7 @@ export const useUpload = () => {
             },
           ],
         }));
-      } catch (err) {
+      } catch (_err) {
         setState((prev) => ({
           ...prev,
           isUploading: false,
