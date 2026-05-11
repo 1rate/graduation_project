@@ -1,11 +1,10 @@
 import js from "@eslint/js";
-import { defineConfig } from "eslint/config";
-import tseslint from "typescript-eslint";
+import prettier from "eslint-config-prettier";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
-import importPlugin from "eslint-plugin-import";
-import prettier from "eslint-config-prettier";
+import { defineConfig } from "eslint/config";
 import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default defineConfig(
   {
@@ -54,9 +53,6 @@ export default defineConfig(
 
   {
     files: ["src/**/*.{ts,tsx}"],
-    plugins: {
-      import: importPlugin,
-    },
     settings: {
       "import/resolver": {
         typescript: true,
