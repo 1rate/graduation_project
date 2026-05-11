@@ -29,14 +29,8 @@ jobs:
           version: latest
           run_install: false
 
-      - name: Approve build scripts
-        run: |
-          echo "${{ github.workspace }}/frontend/.npmrc"
-          cat <<EOF >> .npmrc
-          onlyBuiltDependencies[]=esbuild
-          onlyBuiltDependencies[]=msw
-          onlyBuiltDependencies[]=unrs-resolver
-          EOF
+      - name: Delete stale lockfile
+        run: rm -f pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install
