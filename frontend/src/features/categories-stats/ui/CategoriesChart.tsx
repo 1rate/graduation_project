@@ -1,7 +1,7 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useCategoriesStats } from "@/features/categories-stats/model/useCategoriesStats";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Skeleton } from "@/shared/ui/skeleton";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 interface CategoriesChartProps {
   from?: string;
