@@ -1,8 +1,8 @@
-import { MetricsCards } from "@/features/metrics-overview";
-import { SentimentChart } from "@/features/sentiment-stats";
 import { CategoriesChart } from "@/features/categories-stats";
-import { TrendChart } from "@/features/timeline-stats";
+import { MetricsCards } from "@/features/metrics-overview";
 import { RecentCallsTable } from "@/features/recent-calls";
+import { SentimentChart } from "@/features/sentiment-stats";
+import { TrendChart } from "@/features/timeline-stats";
 
 export const DashboardPage = () => {
   return (

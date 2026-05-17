@@ -10,19 +10,55 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/ui/dropdown-menu";
-import { Input } from "@/shared/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
-import { Activity, Bell, ChevronDown, LogOut, Menu, Search, Settings } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Activity, Bell, ChevronDown, ChevronRight, Home, LogOut, Menu } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
+
+const routeLabels: Record<string, string> = {
+  "": "Дашборд",
+  upload: "Загрузка",
+  history: "История",
+  summary: "Сводки",
+};
+
+const Breadcrumbs = () => {
+  const { pathname } = useLocation();
+  const segments = pathname.split("/").filter(Boolean);
+
+  const crumbs = segments.map((seg, idx) => {
+    const path = "/" + segments.slice(0, idx + 1).join("/");
+    const isLast = idx === segments.length - 1;
+    const label = routeLabels[seg] ?? seg;
+
+    return { path, label, isLast };
+  });
+
+  return (
+    <nav className="hidden sm:flex items-center gap-1 text-sm text-muted-foreground">
+      <Link to="/" className="hover:text-foreground transition-colors flex items-center gap-1">
+        <Home className="h-3.5 w-3.5" />
+      </Link>
+      {crumbs.map((crumb) => (
+        <span key={crumb.path} className="flex items-center gap-1">
+          <ChevronRight className="h-3.5 w-3.5" />
+          {crumb.isLast ? (
+            <span className="text-foreground font-medium">{crumb.label}</span>
+          ) : (
+            <Link to={crumb.path} className="hover:text-foreground transition-colors">
+              {crumb.label}
+            </Link>
+          )}
+        </span>
+      ))}
+    </nav>
+  );
+};
 
 export const Header = () => {
   const { mutate: logout } = useLogout();
-  const [searchFocused, setSearchFocused] = useState(false);
 
-  // Заглушка — позже заменим на реальные данные
   const pendingCount = 3;
   const userName = "Алексей";
   const userEmail = "alex@example.com";
@@ -40,6 +76,7 @@ export const Header = () => {
               <Sidebar variant="mobile" />
             </SheetContent>
           </Sheet>
+          <Breadcrumbs />
           {/* Лого */}
           <Link to="/" className="flex lg:hidden items-center gap-2 font-semibold text-lg shrink-0">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
@@ -49,28 +86,12 @@ export const Header = () => {
               Tone<span className="text-primary">Call</span>
             </span>
           </Link>
-
-          {/* Поиск (скрыт на мобилке, показывается по фокусу или на десктопе) */}
-          <div
-            className={`hidden md:flex items-center gap-2 rounded-md border bg-muted/50 px-3 py-1.5 transition-all ${
-              searchFocused ? "w-72 border-primary/50 bg-background" : "w-48"
-            }`}
-          >
-            <Search className="h-4 w-4 text-muted-foreground shrink-0" />
-            <Input
-              type="search"
-              placeholder="Поиск..."
-              className="h-7 border-0 bg-transparent p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground"
-              onFocus={() => setSearchFocused(true)}
-              onBlur={() => setSearchFocused(false)}
-            />
-          </div>
         </div>
 
         {/* ========== Правая часть ========== */}
         <div className="flex items-center gap-2">
           {/* Статус системы */}
-          <Tooltip>
+          {/* <Tooltip>
             <TooltipTrigger asChild>
               <div className="hidden lg:flex items-center gap-2 rounded-md bg-muted/50 px-3 py-1.5">
                 <span className="relative flex h-2 w-2">
@@ -81,7 +102,7 @@ export const Header = () => {
               </div>
             </TooltipTrigger>
             <TooltipContent>Все сервисы работают</TooltipContent>
-          </Tooltip>
+          </Tooltip> */}
 
           {/* В обработке */}
           {pendingCount > 0 && (
@@ -133,10 +154,10 @@ export const Header = () => {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              {/* <DropdownMenuItem>
                 <Settings className="mr-2 h-4 w-4" />
                 Настройки
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => logout()}
