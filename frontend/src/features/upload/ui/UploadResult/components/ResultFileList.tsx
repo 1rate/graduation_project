@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { CheckCircle, Copy, ExternalLink } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { ScrollArea } from "@/shared/ui/scroll-area";
+import { CheckCircle, Copy, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface ResultFile {
   messageId: string;
@@ -48,7 +48,7 @@ export const ResultFileList = ({ items }: ResultFileListProps) => {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => navigate(`/calls/${item.messageId}`)}
+                onClick={() => navigate(`/history/${item.messageId}`)}
               >
                 <ExternalLink className="h-4 w-4" />
               </Button>

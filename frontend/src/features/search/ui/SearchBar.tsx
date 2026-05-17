@@ -1,7 +1,7 @@
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Search, X } from "lucide-react";
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 
 interface SearchBarProps {
   value: string;
@@ -15,11 +15,14 @@ export const SearchBar = ({
   placeholder = "Поиск по тексту обращения...",
 }: SearchBarProps) => {
   const [local, setLocal] = useState(value);
+  const prevValue = useRef(value);
 
-  const isControlled = value !== local;
-  if (isControlled && value === "") {
-    setLocal("");
-  }
+  useEffect(() => {
+    if (value !== prevValue.current) {
+      setLocal(value);
+      prevValue.current = value;
+    }
+  }, [value]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

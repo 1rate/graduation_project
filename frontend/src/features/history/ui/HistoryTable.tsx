@@ -36,6 +36,7 @@ export const HistoryTable = ({ items, isLoading, onRowClick }: HistoryTableProps
             <th className="p-3 font-medium">Текст</th>
             <th className="p-3 font-medium">Тональность</th>
             <th className="p-3 font-medium">Категория</th>
+            <th className="p-3 font-medium w-10"></th>
           </tr>
         </thead>
         <tbody>
