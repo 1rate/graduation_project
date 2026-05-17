@@ -1,7 +1,7 @@
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { useSentimentStats } from "@/features/sentiment-stats/model/useSentimentStats";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Skeleton } from "@/shared/ui/skeleton";
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 const COLORS = {
   positive: "#22c55e", // green-500
@@ -63,7 +63,7 @@ export const SentimentChart = ({ from, to }: SentimentChartProps) => {
         <CardTitle>Тональность обращений</CardTitle>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={250} className="lg:!h-[300px]">
+        <ResponsiveContainer width="100%" height={300} className="lg:!h-[300px]">
           <PieChart>
             <Pie
               data={chartData}
@@ -73,7 +73,10 @@ export const SentimentChart = ({ from, to }: SentimentChartProps) => {
               outerRadius={100}
               paddingAngle={2}
               dataKey="value"
-              label={({ name, percent }) => `${name} ${(percent ?? 0 * 100).toFixed(0)}%`}
+              label={({ name, percent }) => {
+                const pct = (percent ?? 0) * 100;
+                return `${name} ${pct.toFixed(0)}%`;
+              }}
             >
               {chartData.map((entry, index) => (
                 <Cell key={index} fill={entry.color} />

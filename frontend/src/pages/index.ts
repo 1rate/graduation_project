@@ -1,5 +1,7 @@
+export { CallDetailModal, CallDetailPage } from "./CallDetail";
 export { DashboardPage } from "./Dashboard";
-export { RegisterPage } from "./Register";
+export { HistoryPage } from "./History";
 export { LoginPage } from "./Login";
 export { NotFoundPage } from "./NotFound";
+export { RegisterPage } from "./Register";
 export { UploadPage } from "./Upload";
