@@ -1,13 +1,14 @@
+import { DatePickerClearable } from "@/shared/components/DatePicker";
 import type { SentimentLabel } from "@/shared/types/api";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
-import { Input } from "@/shared/ui/input";
 import { RotateCcw } from "lucide-react";
 
 interface SearchFiltersProps {
   from: string;
   to: string;
   sentiment: SentimentLabel | "";
+  q: string | "";
   onFromChange: (from: string) => void;
   onToChange: (to: string) => void;
   onSentimentChange: (sentiment: SentimentLabel | "") => void;
@@ -24,38 +25,28 @@ const sentimentOptions: Array<{
   { value: "negative", label: "Негатив", variant: "destructive" },
 ];
 
-const hasFilters = (from: string, to: string, sentiment: string) => from || to || sentiment;
+const hasFilters = (from: string, to: string, sentiment: string, q: string) =>
+  from || to || sentiment || q;
 
 export const SearchFilters = ({
   from,
   to,
   sentiment,
+  q,
   onFromChange,
   onToChange,
   onSentimentChange,
   onReset,
 }: SearchFiltersProps) => {
   return (
-    <div className="flex flex-wrap items-end gap-3">
-      <div className="space-y-1">
-        <label className="text-xs text-muted-foreground">С</label>
-        <Input
-          type="date"
-          value={from}
-          onChange={(e) => onFromChange(e.target.value)}
-          className="w-40"
-        />
+    <div className="flex flex-wrap items-end gap-3 w-full h-full">
+      <div className="flex items-end gap-2">
+        <DatePickerClearable value={from} onChange={onFromChange} placeholder="MM.ДД.ГГГГ" />
+        <span className="text-lg text-muted-foreground pb-1">—</span>
+        <DatePickerClearable value={to} onChange={onToChange} placeholder="MM.ДД.ГГГГ" />
       </div>
-      <div className="space-y-1">
-        <label className="text-xs text-muted-foreground">По</label>
-        <Input
-          type="date"
-          value={to}
-          onChange={(e) => onToChange(e.target.value)}
-          className="w-40"
-        />
-      </div>
-      <div className="flex gap-2 flex-wrap">
+
+      <div className="flex gap-2 flex-wrap items-center h-full">
         {sentimentOptions.map((opt) => (
           <Badge
             key={opt.value}
@@ -67,7 +58,8 @@ export const SearchFilters = ({
           </Badge>
         ))}
       </div>
-      {hasFilters(from, to, sentiment) && (
+
+      {hasFilters(from, to, sentiment, q) && (
         <Button variant="ghost" size="sm" onClick={onReset}>
           <RotateCcw className="mr-2 h-4 w-4" />
           Сбросить
