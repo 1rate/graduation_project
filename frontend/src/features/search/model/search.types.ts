@@ -4,4 +4,6 @@ export interface SearchFilters {
   to: string;
   page: number;
   size: number;
+  localSentiment?: string;
+  localCategory?: string;
 }

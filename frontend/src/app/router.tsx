@@ -7,6 +7,7 @@ import {
   LoginPage,
   NotFoundPage,
   RegisterPage,
+  SummaryPage,
   UploadPage,
 } from "@/pages";
 import { createBrowserRouter, Navigate } from "react-router-dom";
@@ -31,7 +32,8 @@ export const router = createBrowserRouter([
           { index: true, element: <DashboardPage /> },
           { path: "upload", element: <UploadPage /> },
           { path: "history", element: <HistoryPage /> },
-          { path: "calls/:id", element: <CallDetailPage /> },
+          { path: "history/:id", element: <CallDetailPage /> },
+          { path: "summary", element: <SummaryPage /> },
           { path: "*", element: <NotFoundPage /> },
         ],
       },

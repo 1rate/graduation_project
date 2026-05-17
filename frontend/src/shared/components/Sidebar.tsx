@@ -1,4 +1,4 @@
-import { Activity, History, LayoutDashboard, Upload } from "lucide-react";
+import { Activity, FileText, History, LayoutDashboard, Upload } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 
@@ -8,6 +8,7 @@ const DEFAULT_WIDTH = 256;
 
 const links = [
   { to: "/", label: "Дашборд", icon: LayoutDashboard },
+  { to: "/summary", label: "Сводки", icon: FileText },
   { to: "/upload", label: "Загрузка", icon: Upload },
   { to: "/history", label: "История", icon: History },
 ];

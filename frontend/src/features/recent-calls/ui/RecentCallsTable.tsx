@@ -1,10 +1,10 @@
-import { useNavigate } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
 import { useRecentCalls } from "@/features/recent-calls/model/useRecentCalls";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Skeleton } from "@/shared/ui/skeleton";
+import { ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const sentimentBadge: Record<
   string,
@@ -65,7 +65,7 @@ export const RecentCallsTable = () => {
             return (
               <div
                 key={call.message_id}
-                onClick={() => navigate(`/calls/${call.message_id}`)}
+                onClick={() => navigate(`/history/${call.message_id}`)}
                 className="flex items-center justify-between rounded-lg border p-3 cursor-pointer hover:bg-muted/50 transition-colors"
               >
                 <div className="min-w-0 flex-1">
