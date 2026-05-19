@@ -1,23 +1,20 @@
-import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
-import { ApiError } from "@/shared/api/errors";
 import type { ApiErrorResponse } from "@/shared/api/errors";
+import { ApiError } from "@/shared/api/errors";
+import type { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 
 // ============================================
 // Хранилище токенов
 // ============================================
-let accessToken: string | null = null;
-let refreshToken: string | null = null;
+const ACCESS_KEY = "auth_access_token";
 
 export const tokenStorage = {
-  getAccessToken: (): string | null => accessToken,
-  getRefreshToken: (): string | null => refreshToken,
-  setTokens: (access: string, refresh?: string) => {
-    accessToken = access;
-    if (refresh) refreshToken = refresh;
+  getAccessToken: (): string | null => localStorage.getItem(ACCESS_KEY),
+  getRefreshToken: (): string | null => null,
+  setTokens: (access: string, _refresh?: string) => {
+    localStorage.setItem(ACCESS_KEY, access);
   },
   clear: () => {
-    accessToken = null;
-    refreshToken = null;
+    localStorage.removeItem(ACCESS_KEY);
   },
 };
 

@@ -1,13 +1,16 @@
-import { useMutation } from "@tanstack/react-query";
 import { authApi } from "@/features/auth/model/auth.store";
 import { tokenStorage } from "@/shared/api";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 export const useLogin = () => {
+  const navigate = useNavigate();
+
   return useMutation({
     mutationFn: authApi.login,
     onSuccess: (data) => {
       tokenStorage.setTokens(data.token);
-      // TODO: редирект на дашборд
+      navigate("/");
     },
     onError: (error) => {
       console.error("[AUTH] Ошибка входа:", error);
@@ -16,11 +19,13 @@ export const useLogin = () => {
 };
 
 export const useRegister = () => {
+  const navigate = useNavigate();
+
   return useMutation({
     mutationFn: authApi.register,
     onSuccess: (data) => {
       tokenStorage.setTokens(data.token);
-      // TODO: редирект на дашборд
+      navigate("/");
     },
     onError: (error) => {
       console.error("[AUTH] Ошибка регистрации:", error);
@@ -29,11 +34,14 @@ export const useRegister = () => {
 };
 
 export const useLogout = () => {
+  const navigate = useNavigate();
+
   return useMutation({
-    mutationFn: authApi.logout,
-    onSettled: () => {
+    mutationFn: async () => {
       tokenStorage.clear();
-      // TODO: редирект на логин
+    },
+    onSettled: () => {
+      navigate("/auth/login");
     },
   });
 };
