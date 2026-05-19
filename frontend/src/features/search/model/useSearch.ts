@@ -1,5 +1,5 @@
 import type { SearchFiltersProps } from "@/features/search/model/search.types";
-import { analyticsApi, endpoints } from "@/shared/api";
+import { api, endpoints } from "@/shared/api";
 import { toRFC3339 } from "@/shared/lib/utils";
 import type { IndexedMessage, SearchResponse } from "@/shared/types/api";
 import { useQuery } from "@tanstack/react-query";
@@ -9,7 +9,7 @@ export const useSearch = (filters: SearchFiltersProps) => {
   const query = useQuery({
     queryKey: ["search", filters],
     queryFn: () =>
-      analyticsApi.get<SearchResponse>(endpoints.search.list, {
+      api.get<SearchResponse>(endpoints.search.list, {
         params: {
           q: filters.q || undefined,
           from: toRFC3339(filters.from),

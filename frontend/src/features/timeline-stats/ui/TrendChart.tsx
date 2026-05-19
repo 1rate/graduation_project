@@ -133,7 +133,7 @@ export const TrendChart = ({
     ...point.counts,
   }));
 
-  const keys = Object.keys(data.points[0]?.counts ?? {});
+  const keys = [...new Set(data.points.flatMap((p) => Object.keys(p.counts ?? {})))];
 
   return (
     <Card>

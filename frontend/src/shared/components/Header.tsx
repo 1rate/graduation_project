@@ -1,5 +1,7 @@
 import { useLogout } from "@/features/auth";
-import { Avatar, AvatarFallback, AvatarImage } from "@/shared/ui/avatar";
+import { CategoryFilterTrigger } from "@/features/category-filter";
+import { tokenStorage } from "@/shared/api";
+import { Avatar, AvatarFallback } from "@/shared/ui/avatar";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import {
@@ -13,6 +15,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/shared/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
 import { Activity, Bell, ChevronDown, ChevronRight, Home, LogOut, Menu } from "lucide-react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 
@@ -22,6 +25,15 @@ const routeLabels: Record<string, string> = {
   history: "История",
   summary: "Сводки",
 };
+
+function parseJwt(token: string): { username?: string; role?: string } | null {
+  try {
+    const payload = token.split(".")[1];
+    return JSON.parse(atob(payload ?? ""));
+  } catch {
+    return null;
+  }
+}
 
 const Breadcrumbs = () => {
   const { pathname } = useLocation();
@@ -36,7 +48,7 @@ const Breadcrumbs = () => {
   });
 
   return (
-    <nav className="hidden sm:flex items-center gap-1 text-sm text-muted-foreground">
+    <nav className="hidden lg:flex items-center gap-1 text-sm text-muted-foreground">
       <Link to="/" className="hover:text-foreground transition-colors flex items-center gap-1">
         <Home className="h-3.5 w-3.5" />
       </Link>
@@ -59,25 +71,29 @@ const Breadcrumbs = () => {
 export const Header = () => {
   const { mutate: logout } = useLogout();
 
+  const [open, setOpen] = useState(false);
+
+  const token = tokenStorage.getAccessToken();
+  const jwt = token ? parseJwt(token) : null;
+  const userName = jwt?.username ?? "Пользователь";
+  const userRole = jwt?.role ?? "user";
+
   const pendingCount = 3;
-  const userName = "Алексей";
-  const userEmail = "alex@example.com";
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center justify-between px-4 lg:px-6">
         {/* ========== Левая часть ========== */}
         <div className="flex items-center gap-4">
-          <Sheet>
+          <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger className="lg:hidden">
               <Menu className="h-5 w-5" />
             </SheetTrigger>
             <SheetContent side="left" className="w-64 p-0">
-              <Sidebar variant="mobile" />
+              <Sidebar variant="mobile" onLinkClick={() => setOpen(false)} />
             </SheetContent>
           </Sheet>
           <Breadcrumbs />
-          {/* Лого */}
           <Link to="/" className="flex lg:hidden items-center gap-2 font-semibold text-lg shrink-0">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <Activity className="h-5 w-5" />
@@ -89,22 +105,9 @@ export const Header = () => {
         </div>
 
         {/* ========== Правая часть ========== */}
-        <div className="flex items-center gap-2">
-          {/* Статус системы */}
-          {/* <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="hidden lg:flex items-center gap-2 rounded-md bg-muted/50 px-3 py-1.5">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
-                </span>
-                <span className="text-xs text-muted-foreground">Система активна</span>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>Все сервисы работают</TooltipContent>
-          </Tooltip> */}
 
-          {/* В обработке */}
+        <div className="flex items-center gap-2">
+          <CategoryFilterTrigger />
           {pendingCount > 0 && (
             <Tooltip>
               <TooltipTrigger asChild>
@@ -126,7 +129,6 @@ export const Header = () => {
             </Tooltip>
           )}
 
-          {/* Разделитель */}
           <div className="hidden sm:block h-8 w-px bg-border mx-1" />
 
           {/* Профиль */}
@@ -134,14 +136,13 @@ export const Header = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 px-2 py-1.5">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="" alt={userName} />
                   <AvatarFallback className="bg-primary/10 text-primary text-sm">
                     {userName.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="hidden lg:flex flex-col items-start text-sm">
                   <span className="font-medium">{userName}</span>
-                  <span className="text-xs text-muted-foreground">{userEmail}</span>
+                  <span className="text-xs text-muted-foreground capitalize">{userRole}</span>
                 </div>
                 <ChevronDown className="hidden lg:block h-4 w-4 text-muted-foreground" />
               </Button>
@@ -150,14 +151,9 @@ export const Header = () => {
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium">{userName}</p>
-                  <p className="text-xs text-muted-foreground">{userEmail}</p>
+                  <p className="text-xs text-muted-foreground capitalize">{userRole}</p>
                 </div>
               </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {/* <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                Настройки
-              </DropdownMenuItem> */}
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => logout()}

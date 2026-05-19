@@ -48,7 +48,7 @@ export const CategoriesChart = ({
   const handleBarClick = useCallback(
     (entry: { key?: string }) => {
       if (entry.key) {
-        navigate(`/history?category=${encodeURIComponent(entry.key)}&from=${from}&to=${to}`);
+        navigate(`/history?categories=${encodeURIComponent(entry.key)}&from=${from}&to=${to}`);
       }
     },
     [from, to, navigate],
