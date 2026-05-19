@@ -1,4 +1,4 @@
-export interface SearchFilters {
+export interface SearchFiltersProps {
   q: string;
   from: string;
   to: string;

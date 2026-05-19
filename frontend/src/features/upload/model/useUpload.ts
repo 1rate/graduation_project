@@ -1,5 +1,5 @@
 import type { UploadFile, UploadResult, UploadSource } from "@/features/upload/model/upload.types";
-import { endpoints, ingestApi } from "@/shared/api";
+import { api, endpoints } from "@/shared/api";
 import type { IngestResponse } from "@/shared/types/api";
 import { useCallback, useRef, useState } from "react";
 
@@ -76,7 +76,7 @@ export const useUpload = () => {
       formData.append("source", "audio");
       formData.append("audio", uploadFile.file);
 
-      const response = await ingestApi.upload<IngestResponse>(
+      const response = await api.upload<IngestResponse>(
         endpoints.messages.create,
         formData,
         (percent) =>
@@ -130,10 +130,7 @@ export const useUpload = () => {
         formData.append("source", "text");
         formData.append("text", state.text);
 
-        const response = await ingestApi.upload<IngestResponse>(
-          endpoints.messages.create,
-          formData,
-        );
+        const response = await api.upload<IngestResponse>(endpoints.messages.create, formData);
 
         setState((prev) => ({
           ...prev,
@@ -185,7 +182,7 @@ export const useUpload = () => {
       formData.append("source", "text");
       formData.append("text", state.text);
 
-      const response = await ingestApi.upload<IngestResponse>(endpoints.messages.create, formData);
+      const response = await api.upload<IngestResponse>(endpoints.messages.create, formData);
 
       setState((prev) => ({
         ...prev,

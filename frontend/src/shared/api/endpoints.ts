@@ -1,31 +1,28 @@
 export const endpoints = {
   auth: {
-    login: "/auth/login",
-    register: "/auth/register",
-    refresh: "/auth/refresh",
-    logout: "/auth/logout",
+    login: "/api/v1/auth/login",
   },
 
-  // Ingest
+  categories: "/api/v1/categories",
+
+  admin: {
+    users: "/api/v1/admin/users",
+    userDetail: (id: string) => `/api/v1/admin/users/${id}`,
+    userCategories: (id: string) => `/api/v1/admin/users/${id}/categories`,
+  },
+
   messages: {
     create: "/api/v1/messages",
   },
 
-  // Search
   search: {
     list: "/api/v1/search",
     detail: (id: string) => `/api/v1/messages/${id}`,
   },
 
-  // Stats
   stats: {
     sentiment: "/api/v1/stats/sentiment",
     categories: "/api/v1/stats/categories",
     timeline: "/api/v1/stats/timeline",
-  },
-
-  users: {
-    me: "/users/me",
-    update: "/users/me",
   },
 } as const;

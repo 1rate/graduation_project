@@ -1,4 +1,4 @@
-import { analyticsApi, endpoints } from "@/shared/api";
+import { api, endpoints } from "@/shared/api";
 import { toRFC3339 } from "@/shared/lib/utils";
 import type { StatsBucket, StatsMetric, Timeline } from "@/shared/types/api";
 import { useQuery } from "@tanstack/react-query";
@@ -12,7 +12,7 @@ export const useTimeline = (
   return useQuery({
     queryKey: ["stats", "timeline", bucket, metric, from, to],
     queryFn: () =>
-      analyticsApi.get<Timeline>(endpoints.stats.timeline, {
+      api.get<Timeline>(endpoints.stats.timeline, {
         params: {
           bucket,
           metric,

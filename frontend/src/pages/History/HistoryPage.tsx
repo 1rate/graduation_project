@@ -1,5 +1,4 @@
 import { HistoryTable } from "@/features/history/ui/HistoryTable";
-import type { SearchFiltersProps } from "@/features/search/model/search.types";
 import { useSearch } from "@/features/search/model/useSearch";
 import { Pagination } from "@/features/search/ui/Pagination";
 import { SearchBar } from "@/features/search/ui/SearchBar";
@@ -23,6 +22,11 @@ export const HistoryPage = () => {
     () => (searchParams.get("sentiment") as SentimentLabel) ?? "",
     [searchParams],
   );
+  const initialCategory = useMemo(() => searchParams.get("category") ?? "", [searchParams]);
+  const initialCategories = useMemo(
+    () => searchParams.get("categories")?.split(",").filter(Boolean) ?? [],
+    [searchParams],
+  );
   const initialPage = useMemo(() => {
     const p = searchParams.get("page");
     return p ? parseInt(p) : 1;
@@ -32,28 +36,49 @@ export const HistoryPage = () => {
   const [from, setFrom] = useState(initialFrom);
   const [to, setTo] = useState(initialTo);
   const [sentiment, setSentiment] = useState<SentimentLabel | "">(initialSentiment);
+  const [category, setCategory] = useState(initialCategory);
+  const [categories, setCategories] = useState<string[]>(initialCategories);
   const [page, setPage] = useState(initialPage);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-
+  console.log(initialCategories, categories);
+  // Синхронизация URL
   useEffect(() => {
     const params: Record<string, string> = {};
     if (q) params.q = q;
     if (from) params.from = from;
     if (to) params.to = to;
     if (sentiment) params.sentiment = sentiment;
+    if (category) params.category = category;
+    if (categories.length > 0) params.categories = categories.join(",");
     if (page > 1) params.page = String(page);
     setSearchParams(params, { replace: true });
-  }, [q, from, to, sentiment, page, setSearchParams]);
+  }, [q, from, to, sentiment, category, categories, page, setSearchParams]);
 
-  const filters: SearchFiltersProps = {
-    q,
-    from,
-    to,
-    page,
-    size: PAGE_SIZE,
-    localSentiment: sentiment,
-  };
-  const { data, isLoading } = useSearch(filters);
+  const { data, isLoading } = useSearch({ q, from, to, page, size: PAGE_SIZE });
+
+  // Фильтрация на клиенте
+  const filteredItems = useMemo(() => {
+    if (!data?.items) return [];
+    return data.items.filter((item) => {
+      if (sentiment && item.sentiment?.label !== sentiment) return false;
+      if (category && item.category?.category !== category) return false;
+      if (
+        categories.length > 0 &&
+        (!item.category?.category || !categories.includes(item.category.category))
+      )
+        return false;
+      return true;
+    });
+  }, [data, sentiment, category, categories]);
+
+  // Все доступные категории из текущего результата
+  const availableCategories = useMemo(() => {
+    const cats = new Set<string>();
+    data?.items.forEach((item) => {
+      if (item.category?.category) cats.add(item.category.category);
+    });
+    return [...cats].sort();
+  }, [data]);
 
   const handleSearch = useCallback((value: string) => {
     setQ(value);
@@ -75,11 +100,18 @@ export const HistoryPage = () => {
     setPage(1);
   }, []);
 
+  const handleCategoriesChange = useCallback((value: string[]) => {
+    setCategories(value);
+    setPage(1);
+  }, []);
+
   const handleReset = useCallback(() => {
     setQ("");
     setFrom("");
     setTo("");
     setSentiment("");
+    setCategory("");
+    setCategories([]);
     setPage(1);
   }, []);
 
@@ -90,18 +122,21 @@ export const HistoryPage = () => {
       <div className="space-y-4">
         <SearchBar value={q} onChange={handleSearch} />
         <SearchFilters
-          q={q}
           from={from}
           to={to}
           sentiment={sentiment}
+          q={q}
+          categories={categories}
+          availableCategories={availableCategories}
           onFromChange={handleFromChange}
           onToChange={handleToChange}
           onSentimentChange={handleSentimentChange}
+          onCategoriesChange={handleCategoriesChange}
           onReset={handleReset}
         />
       </div>
 
-      <HistoryTable items={data?.items ?? []} isLoading={isLoading} onRowClick={setSelectedId} />
+      <HistoryTable items={filteredItems} isLoading={isLoading} onRowClick={setSelectedId} />
 
       {data && (
         <Pagination page={page} total={data.total} size={PAGE_SIZE} onPageChange={setPage} />
