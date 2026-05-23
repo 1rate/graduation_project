@@ -24,6 +24,7 @@ const routeLabels: Record<string, string> = {
   upload: "Загрузка",
   history: "История",
   summary: "Сводки",
+  users: "Пользователи",
 };
 
 function parseJwt(token: string): { username?: string; role?: string } | null {
