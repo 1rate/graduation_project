@@ -27,7 +27,7 @@ jobs:
           version: latest
 
       - name: Install dependencies
-        run: pnpm install --config.onlyBuiltDependencies=esbuild,msw,unrs-resolver
+        run: pnpm install --ignore-scripts --config.onlyBuiltDependencies=esbuild,msw,unrs-resolver
 
       - name: Build
         run: pnpm run build
