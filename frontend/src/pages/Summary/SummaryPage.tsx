@@ -47,7 +47,7 @@ export const SummaryPage = () => {
           <SummaryRecords records={data.records} />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <SummaryTopCategories categories={data.topCategories} />
-            <SummaryHourlyHeat data={data.hourly} />
+            <SummaryHourlyHeat data={data.hourly} period={period} />
           </div>
           {data.anomalies.length > 0 && <SummaryAnomalies items={data.anomalies} />}
           <SummaryConclusion text={data.conclusion} />

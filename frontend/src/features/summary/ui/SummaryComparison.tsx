@@ -11,7 +11,7 @@ export const SummaryComparison = ({ rows, prevLabel }: SummaryComparisonProps) =
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">По сравнению с {prevLabel.toLowerCase()}</CardTitle>
+        <CardTitle className="text-base">По сравнению с прошлым периодом</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <table className="w-full text-sm">
@@ -19,7 +19,7 @@ export const SummaryComparison = ({ rows, prevLabel }: SummaryComparisonProps) =
             <tr className="border-b text-xs text-muted-foreground">
               <th className="text-left p-3 font-medium">Метрика</th>
               <th className="text-left p-3 font-medium">{prevLabel}</th>
-              <th className="text-left p-3 font-medium">Текущий</th>
+              <th className="text-left p-3 font-medium">Текущий период</th>
               <th className="text-right p-3 font-medium">Δ</th>
             </tr>
           </thead>

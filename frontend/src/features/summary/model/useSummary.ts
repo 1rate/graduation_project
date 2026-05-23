@@ -1,4 +1,5 @@
 import { useCategoriesStats } from "@/features/categories-stats";
+import { useSearch } from "@/features/search/model/useSearch";
 import { useSentimentStats } from "@/features/sentiment-stats";
 import type {
   AnomalyItem,
@@ -98,10 +99,7 @@ const deltaStr = (cur: number, prev: number, unit = ""): { str: string; positive
   const diff = cur - prev;
   if (diff === 0) return { str: "→0", positive: true };
   const sign = diff > 0 ? "+" : "";
-  return {
-    str: `${sign}${diff}${unit}`,
-    positive: diff > 0,
-  };
+  return { str: `${sign}${diff}${unit}`, positive: diff > 0 };
 };
 
 export const useSummary = (period: SummaryPeriod): SummaryData | null => {
@@ -113,6 +111,22 @@ export const useSummary = (period: SummaryPeriod): SummaryData | null => {
   const { data: prevCategories } = useCategoriesStats(prev.from, prev.to);
   const { data: timeline } = useTimeline("day", "sentiment", current.from, current.to);
   const { data: hourlyTimeline } = useTimeline("hour", "sentiment", current.from, current.to);
+  const { data: negativeData } = useSearch({
+    q: "",
+    from: current.from,
+    to: current.to,
+    page: 1,
+    size: 1000,
+    localSentiment: "negative",
+  });
+  const { data: prevNegativeData } = useSearch({
+    q: "",
+    from: prev.from,
+    to: prev.to,
+    page: 1,
+    size: 1000,
+    localSentiment: "negative",
+  });
 
   return useMemo(() => {
     if (!sentiment || !categories || !prevSentiment || !prevCategories) return null;
@@ -132,10 +146,23 @@ export const useSummary = (period: SummaryPeriod): SummaryData | null => {
     const prevPosPct = pct(prevPos, prevTotal);
     const prevNegPct = pct(prevNeg, prevTotal);
 
-    const topCat = [...categories.buckets].sort((a, b) => b.count - a.count)[0];
-    const prevTopCat = [...prevCategories.buckets].sort((a, b) => b.count - a.count)[0];
+    // Проблемные категории — по негативным обращениям (текущий период)
+    const negCatCounts = new Map<string, number>();
+    negativeData?.items?.forEach((item) => {
+      const cat = item.category?.category;
+      if (cat) negCatCounts.set(cat, (negCatCounts.get(cat) ?? 0) + 1);
+    });
+    const worstCategory = [...negCatCounts.entries()].sort((a, b) => b[1] - a[1])[0];
 
-    // 3.1 Stats line
+    // Проблемные категории — по негативным обращениям (предыдущий период)
+    const prevNegCatCounts = new Map<string, number>();
+    prevNegativeData?.items?.forEach((item) => {
+      const cat = item.category?.category;
+      if (cat) prevNegCatCounts.set(cat, (prevNegCatCounts.get(cat) ?? 0) + 1);
+    });
+    const prevWorstCategory = [...prevNegCatCounts.entries()].sort((a, b) => b[1] - a[1])[0];
+
+    // Stats line
     const negDelta = negPct - prevNegPct;
 
     const statsLineData: StatsLineData = {
@@ -144,10 +171,11 @@ export const useSummary = (period: SummaryPeriod): SummaryData | null => {
       negPct,
       negDelta,
       prevLabel: current.prevLabel,
-      topCategory: topCat?.key ?? "—",
-      topCategoryCount: topCat?.count ?? 0,
+      topCategory: worstCategory?.[0] ?? "—",
+      topCategoryCount: worstCategory?.[1] ?? 0,
     };
-    // 3.2 Comparison
+
+    // Comparison
     const comparison: ComparisonRow[] = [
       {
         label: "Всего обращений",
@@ -171,99 +199,95 @@ export const useSummary = (period: SummaryPeriod): SummaryData | null => {
         deltaPositive: deltaStr(negPct, prevNegPct).positive,
       },
       {
-        label: "Топ-категория",
-        prev: prevTopCat?.key ?? "—",
-        current: topCat?.key ?? "—",
-        delta: topCat?.key !== prevTopCat?.key ? "↑" : "→",
-        deltaPositive: topCat?.key !== prevTopCat?.key,
+        label: "Проблемная категория",
+        prev: prevWorstCategory?.[0] ?? "—",
+        current: worstCategory?.[0] ?? "—",
+        delta:
+          worstCategory?.[0] && prevWorstCategory?.[0] && worstCategory[0] !== prevWorstCategory[0]
+            ? "↑"
+            : "→",
+        deltaPositive: worstCategory?.[0] !== prevWorstCategory?.[0],
       },
     ];
 
-    // 3.3 Records
+    // Records
     const records: RecordItem[] = [];
+
     if (timeline?.points.length) {
       const firstPoint = timeline.points[0];
-      if (!firstPoint) return null;
+      if (firstPoint) {
+        let bestDay = firstPoint;
+        let worstDay = firstPoint;
 
-      let bestDay = firstPoint;
-      let worstDay = firstPoint;
+        for (const p of timeline.points) {
+          const totalP = Object.values(p.counts).reduce((s, c) => s + c, 0);
+          const bestTotal = Object.values(bestDay.counts).reduce((s, c) => s + c, 0);
+          const worstTotal = Object.values(worstDay.counts).reduce((s, c) => s + c, 0);
+          const posP = p.counts["positive"] ?? 0;
+          const bestPos = bestDay.counts["positive"] ?? 0;
+          const negP = p.counts["negative"] ?? 0;
+          const worstNeg = worstDay.counts["negative"] ?? 0;
 
-      for (const p of timeline.points) {
-        const totalP = Object.values(p.counts).reduce((s, c) => s + c, 0);
-        const bestTotal = Object.values(bestDay.counts).reduce((s, c) => s + c, 0);
-        const worstTotal = Object.values(worstDay.counts).reduce((s, c) => s + c, 0);
-        const posP = p.counts["positive"] ?? 0;
-        const bestPos = bestDay.counts["positive"] ?? 0;
-        const negP = p.counts["negative"] ?? 0;
-        const worstNeg = worstDay.counts["negative"] ?? 0;
+          if (totalP > 0 && bestTotal > 0 && posP / totalP > bestPos / bestTotal) bestDay = p;
+          if (totalP > 0 && worstTotal > 0 && negP / totalP > worstNeg / worstTotal) worstDay = p;
+        }
 
-        if (totalP > 0 && posP / totalP > bestPos / bestTotal) bestDay = p;
-        if (totalP > 0 && negP / totalP > worstNeg / worstTotal) worstDay = p;
-      }
-      const bestDate = new Date(bestDay.bucket).toLocaleDateString("ru-RU", {
-        day: "numeric",
-        month: "long",
-      });
-      const worstDate = new Date(worstDay.bucket).toLocaleDateString("ru-RU", {
-        day: "numeric",
-        month: "long",
-      });
-      records.push({
-        type: "best",
-        label: `Лучший день: ${bestDate}`,
-        value: `${pct(
-          bestDay.counts["positive"] ?? 0,
-          Object.values(bestDay.counts).reduce((s, c) => s + c, 0),
-        )}% позитивных`,
-      });
-      records.push({
-        type: "worst",
-        label: `Худший день: ${worstDate}`,
-        value: `${pct(
-          worstDay.counts["negative"] ?? 0,
-          Object.values(worstDay.counts).reduce((s, c) => s + c, 0),
-        )}% негативных`,
-      });
-    }
+        const bestDate = new Date(bestDay.bucket).toLocaleDateString("ru-RU", {
+          day: "numeric",
+          month: "long",
+        });
+        const worstDate = new Date(worstDay.bucket).toLocaleDateString("ru-RU", {
+          day: "numeric",
+          month: "long",
+        });
 
-    if (categories.buckets.length) {
-      const bestCat = [...categories.buckets].sort((a, b) => b.count - a.count)[0];
-      if (bestCat) {
         records.push({
-          type: "negative",
-          label: "Самая проблемная категория",
-          value: `${bestCat.key} (${bestCat.count})`,
+          type: "best",
+          label: `Лучший день: ${bestDate}`,
+          value: `${pct(
+            bestDay.counts["positive"] ?? 0,
+            Object.values(bestDay.counts).reduce((s, c) => s + c, 0),
+          )}% позитивных`,
+        });
+
+        records.push({
+          type: "worst",
+          label: `Худший день: ${worstDate}`,
+          value: `${pct(
+            worstDay.counts["negative"] ?? 0,
+            Object.values(worstDay.counts).reduce((s, c) => s + c, 0),
+          )}% негативных`,
         });
       }
-      if (categories.buckets.length > 1) {
-        const leastCat = [...categories.buckets].sort((a, b) => a.count - b.count)[0];
-        if (leastCat) {
-          records.push({
-            type: "positive",
-            label: "Наименьшая категория",
-            value: `${leastCat.key} (${leastCat.count})`,
-          });
-        }
-      }
     }
 
-    // 3.4 Top categories
-    const topCategories: TopCategory[] = [...categories.buckets]
-      .sort((a, b) => b.count - a.count)
+    // Самая проблемная категория
+    if (worstCategory) {
+      records.push({
+        type: "negative",
+        label: "Самая проблемная категория",
+        value: `${worstCategory[0]} (${worstCategory[1]} негативных)`,
+      });
+    }
+
+    // Top categories — по негативу
+    const topCategories: TopCategory[] = [...negCatCounts.entries()]
+      .sort((a, b) => b[1] - a[1])
       .slice(0, 5)
-      .map((b) => {
-        const prevBucket = prevCategories.buckets.find((pb) => pb.key === b.key);
-        const trend = prevBucket ? b.count - prevBucket.count : 0;
-        return { name: b.key, count: b.count, percent: pct(b.count, total), trend };
+      .map(([name, count]) => {
+        const prevCount = prevNegCatCounts.get(name) ?? 0;
+        const trend = prevCount > 0 ? count - prevCount : 0;
+        return { name, count, percent: pct(count, neg), trend };
       });
 
-    // 3.5 Hourly
+    // Hourly
+
     const hourly: HourlyData[] = (hourlyTimeline?.points ?? []).map((p) => ({
       hour: new Date(p.bucket).getHours(),
       count: p.counts["negative"] ?? 0,
     }));
 
-    // 3.6 Anomalies
+    // Anomalies
     const anomalies: AnomalyItem[] = [];
     if (timeline?.points.length) {
       const avgNeg = neg / timeline.points.length;
@@ -282,8 +306,8 @@ export const useSummary = (period: SummaryPeriod): SummaryData | null => {
       }
     }
 
-    // 3.7 Conclusion
-    const conclusion = `За ${current.label.toLowerCase()} наблюдается ${negDelta < 0 ? "снижение" : "рост"} негативных обращений на ${Math.abs(negDelta)} %. Основная проблема — ${topCat?.key ?? "—"} (${topCat?.count ?? 0} обращений${topCat && prevTopCat ? `, ${topCat.count > (prevTopCat?.count ?? 0) ? "рост" : "снижение"} на ${Math.abs(topCat.count - (prevTopCat?.count ?? 0))}` : ""}). ${anomalies.length ? `Аномальный день — ${anomalies?.length ? (anomalies[0]?.date ?? "") : ""}.` : ""}`;
+    // Conclusion
+    const conclusion = `За ${current.label.toLowerCase()} наблюдается ${negDelta < 0 ? "снижение" : "рост"} негативных обращений на ${Math.abs(negDelta)} %. Основная проблема — ${worstCategory?.[0] ?? "—"} (${worstCategory?.[1] ?? 0} негативных обращений). ${anomalies.length ? `Аномальный день — ${anomalies[0]?.date ?? ""}.` : ""}`;
 
     return {
       period,
@@ -304,6 +328,8 @@ export const useSummary = (period: SummaryPeriod): SummaryData | null => {
     prevCategories,
     timeline,
     hourlyTimeline,
+    negativeData,
+    prevNegativeData,
     current,
   ]);
 };
