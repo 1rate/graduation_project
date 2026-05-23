@@ -6,3 +6,5 @@ export { NotFoundPage } from "./NotFound";
 export { RegisterPage } from "./Register";
 export { SummaryPage } from "./Summary";
 export { UploadPage } from "./Upload";
+export { UserDetailPage } from "./UserDetailPage";
+export { UsersPage } from "./UsersPage";

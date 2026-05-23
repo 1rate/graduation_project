@@ -4,7 +4,7 @@ import { Navigate, Outlet } from "react-router-dom";
 function parseJwt(token: string): { role?: string } | null {
   try {
     const payload = token.split(".")[1];
-    return JSON.parse(atob(payload));
+    return JSON.parse(atob(payload ?? ""));
   } catch {
     return null;
   }
@@ -19,7 +19,7 @@ export const AuthGuard = () => {
 
   const jwt = parseJwt(token);
 
-  if (!jwt || jwt.role !== "admin") {
+  if (!jwt) {
     return <Navigate to="/auth/login" replace />;
   }
 

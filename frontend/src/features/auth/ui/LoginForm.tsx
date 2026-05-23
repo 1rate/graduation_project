@@ -72,7 +72,7 @@ export const LoginForm = () => {
 
       {apiError && (
         <p className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-          {(apiError as Error).message ?? "Неверное имя пользователя или пароль"}
+          Неверное имя пользователя или пароль
         </p>
       )}
 

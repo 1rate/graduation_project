@@ -1,7 +1,7 @@
 export interface MetricData {
   label: string;
   value: number;
-  previousValue: number;
+  countValue: number;
   format?: "number" | "percent";
 }
 

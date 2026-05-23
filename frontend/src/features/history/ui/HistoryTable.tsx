@@ -1,14 +1,16 @@
 import { HistoryRow } from "@/features/history/ui/HistoryRow";
+import type { UserItem } from "@/features/users";
 import type { IndexedMessage } from "@/shared/types/api";
 import { Skeleton } from "@/shared/ui/skeleton";
 
 interface HistoryTableProps {
   items: IndexedMessage[];
   isLoading: boolean;
+  users: UserItem[];
   onRowClick: (id: string) => void;
 }
 
-export const HistoryTable = ({ items, isLoading, onRowClick }: HistoryTableProps) => {
+export const HistoryTable = ({ items, isLoading, users, onRowClick }: HistoryTableProps) => {
   if (isLoading) {
     return (
       <div className="space-y-3">
@@ -33,6 +35,7 @@ export const HistoryTable = ({ items, isLoading, onRowClick }: HistoryTableProps
         <thead>
           <tr className="border-b text-left text-xs text-muted-foreground">
             <th className="p-3 font-medium">Дата</th>
+            <th className="p-3 font-medium">Пользователь</th>
             <th className="p-3 font-medium">Текст</th>
             <th className="p-3 font-medium">Тональность</th>
             <th className="p-3 font-medium">Категория</th>
@@ -44,6 +47,7 @@ export const HistoryTable = ({ items, isLoading, onRowClick }: HistoryTableProps
             <HistoryRow
               key={item.message_id}
               item={item}
+              users={users}
               onClick={() => onRowClick(item.message_id)}
             />
           ))}

@@ -3,6 +3,7 @@ import { useSearch } from "@/features/search/model/useSearch";
 import { Pagination } from "@/features/search/ui/Pagination";
 import { SearchBar } from "@/features/search/ui/SearchBar";
 import { SearchFilters } from "@/features/search/ui/SearchFilters";
+import { useUsers } from "@/features/users";
 import { CallDetailModal } from "@/pages/CallDetail";
 import { Heading } from "@/shared/components/Heading";
 import { Page } from "@/shared/components/Page";
@@ -32,6 +33,9 @@ export const HistoryPage = () => {
     return p ? parseInt(p) : 1;
   }, [searchParams]);
 
+  const { data: usersData } = useUsers();
+  const users = usersData?.users ?? [];
+
   const [q, setQ] = useState(initialQ);
   const [from, setFrom] = useState(initialFrom);
   const [to, setTo] = useState(initialTo);
@@ -40,7 +44,7 @@ export const HistoryPage = () => {
   const [categories, setCategories] = useState<string[]>(initialCategories);
   const [page, setPage] = useState(initialPage);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  console.log(initialCategories, categories);
+
   // Синхронизация URL
   useEffect(() => {
     const params: Record<string, string> = {};
@@ -55,7 +59,6 @@ export const HistoryPage = () => {
   }, [q, from, to, sentiment, category, categories, page, setSearchParams]);
 
   const { data, isLoading } = useSearch({ q, from, to, page, size: PAGE_SIZE });
-
   // Фильтрация на клиенте
   const filteredItems = useMemo(() => {
     if (!data?.items) return [];
@@ -70,7 +73,6 @@ export const HistoryPage = () => {
       return true;
     });
   }, [data, sentiment, category, categories]);
-
   // Все доступные категории из текущего результата
   const availableCategories = useMemo(() => {
     const cats = new Set<string>();
@@ -136,7 +138,12 @@ export const HistoryPage = () => {
         />
       </div>
 
-      <HistoryTable items={filteredItems} isLoading={isLoading} onRowClick={setSelectedId} />
+      <HistoryTable
+        items={filteredItems}
+        isLoading={isLoading}
+        onRowClick={setSelectedId}
+        users={users}
+      />
 
       {data && (
         <Pagination page={page} total={data.total} size={PAGE_SIZE} onPageChange={setPage} />
