@@ -1,6 +1,7 @@
 import type { UploadFile, UploadResult, UploadSource } from "@/features/upload/model/upload.types";
 import { api, endpoints } from "@/shared/api";
 import type { IngestResponse } from "@/shared/types/api";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useRef, useState } from "react";
 
 const createUploadFile = (file: File): UploadFile => ({
@@ -22,6 +23,7 @@ const initialState = {
 export const useUpload = () => {
   const [state, setState] = useState(initialState);
   const abortRef = useRef(false);
+  const queryClient = useQueryClient();
 
   const setSource = useCallback((source: UploadSource) => {
     setState((prev) => ({
@@ -148,6 +150,9 @@ export const useUpload = () => {
             },
           ],
         }));
+
+        queryClient.invalidateQueries({ queryKey: ["stats"] });
+        queryClient.invalidateQueries({ queryKey: ["messages"] });
       } catch (_err) {
         setState((prev) => ({
           ...prev,
@@ -170,32 +175,10 @@ export const useUpload = () => {
     }
 
     setState((prev) => ({ ...prev, isUploading: false }));
-  }, [state.source, state.text, state.files, uploadSingle]);
 
-  const uploadText = useCallback(async () => {
-    if (!state.text.trim()) return;
-
-    setState((prev) => ({ ...prev, isUploading: true }));
-
-    try {
-      const formData = new FormData();
-      formData.append("source", "text");
-      formData.append("text", state.text);
-
-      const response = await api.upload<IngestResponse>(endpoints.messages.create, formData);
-
-      setState((prev) => ({
-        ...prev,
-        isUploading: false,
-        text: "",
-        completedCount: prev.completedCount + 1,
-      }));
-
-      return response;
-    } catch {
-      setState((prev) => ({ ...prev, isUploading: false }));
-    }
-  }, [state.text]);
+    queryClient.invalidateQueries({ queryKey: ["stats"] });
+    queryClient.invalidateQueries({ queryKey: ["messages"] });
+  }, [state.source, state.text, state.files, uploadSingle, queryClient]);
 
   const cancel = useCallback(() => {
     abortRef.current = true;
@@ -233,7 +216,6 @@ export const useUpload = () => {
     removeFile,
     clearCompleted,
     uploadAll,
-    uploadText,
     cancel,
     getResult,
     isValidFile,

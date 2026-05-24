@@ -1,26 +1,34 @@
 import type { MessageStatus } from "@/shared/types/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import { CheckCircle, Circle, Clock } from "lucide-react";
+import { CheckCircle, Circle, Clock, XCircle } from "lucide-react";
 
 const stages: Array<{ key: MessageStatus; label: string }> = [
   { key: "pending", label: "Принято" },
-  { key: "transcribed", label: "Распознано (STT)" },
-  { key: "pending", label: "Тональность определена" },
-  { key: "pending", label: "Категория определена" },
-  { key: "enriched", label: "Обработано (Indexer)" },
+  { key: "pending", label: "Ожидает обработки" },
+  { key: "transcribed", label: "Речь распознана" },
+  { key: "transcribed", label: "Тональность определена" },
+  { key: "transcribed", label: "Категория определена" },
+  { key: "transcribed", label: "Обработано" },
+];
+const stageOrder: Array<MessageStatus | "received" | "sentiment" | "category"> = [
+  "received",
+  "pending",
+  "transcribed",
+  "sentiment",
+  "category",
+  "enriched",
 ];
 
-// Упрощённая версия: статус enriched = все этапы пройдены
 const completedStages: Record<MessageStatus, number> = {
-  pending: 0,
-  transcribed: 1,
-  enriched: 5,
-  failed: 0,
+  pending: 1,
+  transcribed: 6,
+  failed: -1,
 };
 
 export const ProcessingTimeline = ({ status }: { status: MessageStatus }) => {
   const completed = completedStages[status] ?? 0;
-
+  const isFailed = status === "failed";
+  console.log(status);
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -31,12 +39,16 @@ export const ProcessingTimeline = ({ status }: { status: MessageStatus }) => {
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {stages.map((stage, index) => {
-            const isCompleted = index < completed;
-            const isCurrent = index === completed && status !== "failed";
+          {stages.map((stage) => {
+            const stagePosition = stageOrder.indexOf(stage.key);
+            const isCompleted = stagePosition >= 0 && stagePosition < completed;
+            const isCurrent = stagePosition === completed && !isFailed;
+
             return (
-              <div key={index} className="flex items-center gap-3">
-                {isCompleted ? (
+              <div key={stage.key} className="flex items-center gap-3">
+                {isFailed ? (
+                  <XCircle className="h-4 w-4 text-red-500 shrink-0" />
+                ) : isCompleted ? (
                   <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
                 ) : isCurrent ? (
                   <Clock className="h-4 w-4 text-primary animate-pulse shrink-0" />
@@ -44,7 +56,13 @@ export const ProcessingTimeline = ({ status }: { status: MessageStatus }) => {
                   <Circle className="h-4 w-4 text-muted-foreground shrink-0" />
                 )}
                 <span
-                  className={`text-sm ${isCompleted || isCurrent ? "" : "text-muted-foreground"}`}
+                  className={`text-sm ${
+                    isFailed
+                      ? "text-red-500"
+                      : isCompleted || isCurrent
+                        ? ""
+                        : "text-muted-foreground"
+                  }`}
                 >
                   {stage.label}
                 </span>
