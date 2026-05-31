@@ -1,0 +1,50 @@
+# docker-compose.yml
+version: "3.8"
+
+services:
+  # Полный тест на готовых примерах (без БД)
+  sentiment-test:
+    build: .
+    container_name: sentiment-test
+    environment:
+      - MODEL_PATH=/app/model
+    volumes:
+      - ./output:/app/output
+      - ./test_sentiment.py:/app/test_sentiment.py
+      - ./model:/app/model # <-- обученная модель
+      - hf_cache:/root/.cache/huggingface
+    command: python test_sentiment.py
+    profiles:
+      - test
+
+  sentiment-train:
+    build: .
+    container_name: sentiment-train
+    environment:
+      - DATASET_PATH=data/dataset.csv
+      - MODEL_OUTPUT=/app/model
+    volumes:
+      - ./model:/app/model # чтобы сохранить обученную модель на хосте
+      - hf_cache:/root/.cache/huggingface
+    command: python train_setfit.py
+    profiles:
+      - train
+
+  # Интерактивный режим
+  sentiment-interactive:
+    build: .
+    container_name: sentiment-interactive
+    environment:
+      - MODEL_NAME=blanchefort/rubert-base-cased-sentiment
+    volumes:
+      - ./output:/app/output
+      - ./test_sentiment.py:/app/test_sentiment.py
+      - hf_cache:/root/.cache/huggingface
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+    profiles:
+      - interactive
+
+volumes:
+  hf_cache:

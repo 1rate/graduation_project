@@ -1,14 +1,13 @@
 import { z } from "zod";
 
 export const loginSchema = z.object({
-  email: z.string().min(1, "Email обязателен").email("Некорректный email"),
-  password: z.string().min(1, "Пароль обязателен").min(6, "Пароль должен быть не менее 6 символов"),
+  username: z.string().min(1, "Имя пользователя обязательно"),
+  password: z.string().min(1, "Пароль обязателен").min(3, "Пароль должен быть не менее 3 символов"),
 });
 
 export const registerSchema = z
   .object({
-    name: z.string().min(1, "Имя обязательно").min(2, "Имя должно быть не менее 2 символов"),
-    email: z.string().min(1, "Email обязателен").email("Некорректный email"),
+    username: z.string().min(1, "Имя пользователя обязательно").min(3, "Минимум 3 символа"),
     password: z
       .string()
       .min(1, "Пароль обязателен")

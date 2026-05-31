@@ -1,5 +1,5 @@
+import { createResponseInterceptor, requestInterceptor } from "@/shared/api/interceptors";
 import axios, { type AxiosRequestConfig } from "axios";
-import { requestInterceptor, createResponseInterceptor } from "@/shared/api/interceptors";
 
 interface ApiClientConfig {
   baseURL: string;
@@ -69,14 +69,7 @@ class ApiClient {
   }
 }
 
-export const ingestApi = new ApiClient({
-  baseURL: import.meta.env.VITE_INGEST_API_URL ?? "http://localhost:8080",
+export const api = new ApiClient({
+  baseURL: import.meta.env.VITE_API_URL ?? "http://localhost",
   timeout: 30_000,
 });
-
-export const analyticsApi = new ApiClient({
-  baseURL: import.meta.env.VITE_ANALYTICS_API_URL ?? "http://localhost:8081",
-  timeout: 15_000,
-});
-
-export const api = analyticsApi;

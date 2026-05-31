@@ -1,0 +1,31 @@
+.git/
+.idea/
+.vscode/
+*.md
+!README.md
+
+# Compiled binaries
+*.exe
+*.dll
+bin/
+dist/
+
+# Local env
+.env
+.env.local
+
+# Generated
+docs/architecture/*.png
+
+# Python caches
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+
+# Notebooks data
+notebooks/data/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,10 +1,10 @@
-import { ExternalLink } from "lucide-react";
-import { Card, CardContent } from "@/shared/ui/card";
-import { Button } from "@/shared/ui/button";
-import { useNavigate } from "react-router-dom";
-import { ResultSummary } from "@/features/upload/ui/UploadResult/components/ResultSummary";
-import { ResultFileList } from "@/features/upload/ui/UploadResult/components/ResultFileList";
 import type { UploadResult as UploadResultType } from "@/features/upload/model/upload.types";
+import { ResultFileList } from "@/features/upload/ui/UploadResult/components/ResultFileList";
+import { ResultSummary } from "@/features/upload/ui/UploadResult/components/ResultSummary";
+import { Button } from "@/shared/ui/button";
+import { Card, CardContent } from "@/shared/ui/card";
+import { ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface UploadResultProps {
   result: UploadResultType;
@@ -29,7 +29,7 @@ export const UploadResult = ({ result, onReset }: UploadResultProps) => {
             <Button
               onClick={() => {
                 const id = result.items[0]?.messageId;
-                if (id) navigate(`/calls/${id}`);
+                if (id) navigate(`/history/${id}`);
               }}
             >
               <ExternalLink className="mr-2 h-4 w-4" />

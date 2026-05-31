@@ -1,7 +1,18 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
-import { DashboardPage, LoginPage, NotFoundPage, RegisterPage, UploadPage } from "@/pages";
 import { AppLayout } from "@/app/AppLayout";
 import { AuthGuard } from "@/app/guards/AuthGuard";
+import {
+  CallDetailPage,
+  DashboardPage,
+  HistoryPage,
+  LoginPage,
+  NotFoundPage,
+  RegisterPage,
+  SummaryPage,
+  UploadPage,
+  UserDetailPage,
+  UsersPage,
+} from "@/pages";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
 export const router = createBrowserRouter([
   {
@@ -22,8 +33,11 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <DashboardPage /> },
           { path: "upload", element: <UploadPage /> },
-          { path: "history", element: <UploadPage /> },
-          { path: "calls/:id", element: <DashboardPage /> },
+          { path: "history", element: <HistoryPage /> },
+          { path: "history/:id", element: <CallDetailPage /> },
+          { path: "summary", element: <SummaryPage /> },
+          { path: "/users", element: <UsersPage /> },
+          { path: "/users/:id", element: <UserDetailPage /> },
           { path: "*", element: <NotFoundPage /> },
         ],
       },

@@ -1,4 +1,4 @@
-import { Activity, History, LayoutDashboard, Upload } from "lucide-react";
+import { Activity, FileText, History, LayoutDashboard, Upload, Users } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 
@@ -8,15 +8,18 @@ const DEFAULT_WIDTH = 256;
 
 const links = [
   { to: "/", label: "Дашборд", icon: LayoutDashboard },
+  { to: "/summary", label: "Сводки", icon: FileText },
   { to: "/upload", label: "Загрузка", icon: Upload },
+  { to: "/users", label: "Пользователи", icon: Users },
   { to: "/history", label: "История", icon: History },
 ];
 
 interface SidebarProps {
   variant?: "desktop" | "mobile";
+  onLinkClick?: () => void;
 }
 
-export const Sidebar = ({ variant = "desktop" }: SidebarProps) => {
+export const Sidebar = ({ variant = "desktop", onLinkClick }: SidebarProps) => {
   const isDesktop = variant === "desktop";
 
   const [width, setWidth] = useState(() => {
@@ -77,7 +80,11 @@ export const Sidebar = ({ variant = "desktop" }: SidebarProps) => {
       }
     >
       <div className="p-4 space-y-2 h-full overflow-auto">
-        <Link to="/" className="flex items-center gap-2 font-semibold text-lg shrink-0 mb-4 w-full">
+        <Link
+          to="/"
+          onClick={onLinkClick}
+          className="flex items-center gap-2 font-semibold text-lg shrink-0 mb-4 w-full"
+        >
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shrink-0 mr-1">
             <Activity className="h-5 w-5" />
           </div>
@@ -91,6 +98,7 @@ export const Sidebar = ({ variant = "desktop" }: SidebarProps) => {
             <NavLink
               key={to}
               to={to}
+              onClick={onLinkClick}
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors truncate ${
                   isActive ? "bg-primary text-primary-foreground" : "hover:bg-muted"
@@ -104,7 +112,6 @@ export const Sidebar = ({ variant = "desktop" }: SidebarProps) => {
         </nav>
       </div>
 
-      {/* Ресайз-ручка — только на десктопе */}
       {isDesktop && (
         <div
           onMouseDown={handleMouseDown}

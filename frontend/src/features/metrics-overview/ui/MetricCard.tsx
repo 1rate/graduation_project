@@ -1,6 +1,5 @@
-import { TrendingUp, TrendingDown } from "lucide-react";
-import { Card, CardContent } from "@/shared/ui/card";
 import type { MetricData } from "@/features/metrics-overview/model/metric.types";
+import { Card, CardContent } from "@/shared/ui/card";
 
 interface MetricCardProps {
   metric: MetricData;
@@ -15,11 +14,11 @@ const variantStyles = {
 } as const;
 
 export const MetricCard = ({ metric, variant = "default" }: MetricCardProps) => {
-  const diff = metric.value - metric.previousValue;
-  const diffPercent =
-    metric.previousValue > 0 ? Math.round((Math.abs(diff) / metric.previousValue) * 100) : 0;
-  const isUp = diff >= 0;
-  const isZero = diff === 0;
+  // const diff = metric.value - metric.previousValue;
+  // const diffPercent =
+  //   metric.previousValue > 0 ? Math.round((Math.abs(diff) / metric.previousValue) * 100) : 0;
+  // const isUp = diff >= 0;
+  // const isZero = diff === 0;
 
   const formattedValue =
     metric.format === "percent" ? `${metric.value}%` : metric.value.toLocaleString("ru-RU");
@@ -28,9 +27,11 @@ export const MetricCard = ({ metric, variant = "default" }: MetricCardProps) => 
     <Card>
       <CardContent className="p-6">
         <p className="text-sm text-muted-foreground">{metric.label}</p>
-        <p className={`text-3xl font-bold mt-1 ${variantStyles[variant]}`}>{formattedValue}</p>
+        <p className={`text-3xl font-bold mt-1 ${variantStyles[variant]}`}>
+          {formattedValue} {metric.label !== "Всего обращений" && <>({metric.countValue})</>}
+        </p>
         <div className="flex items-center gap-1 mt-2">
-          {!isZero && (
+          {/* {!isZero && (
             <>
               {isUp ? (
                 <TrendingUp className="h-4 w-4 text-green-600" />
@@ -38,14 +39,14 @@ export const MetricCard = ({ metric, variant = "default" }: MetricCardProps) => 
                 <TrendingDown className="h-4 w-4 text-red-600" />
               )}
             </>
-          )}
-          <span
+          )} */}
+          {/* <span
             className={`text-sm ${
               isUp ? "text-green-600" : isZero ? "text-muted-foreground" : "text-red-600"
             }`}
           >
             {isZero ? "Без изменений" : `${isUp ? "+" : ""}${diffPercent}% к пред. периоду`}
-          </span>
+          </span> */}
         </div>
       </CardContent>
     </Card>

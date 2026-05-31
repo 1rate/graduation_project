@@ -1,12 +1,17 @@
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { useSentimentStats } from "@/features/sentiment-stats/model/useSentimentStats";
+import { DatePickerClearable } from "@/shared/components/DatePicker";
+import { getCurrentWeekRange } from "@/shared/lib/utils";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Skeleton } from "@/shared/ui/skeleton";
+import { useCallback, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 const COLORS = {
-  positive: "#22c55e", // green-500
-  neutral: "#eab308", // yellow-500
-  negative: "#ef4444", // red-500
+  positive: "#22c55e",
+  neutral: "#eab308",
+  negative: "#ef4444",
 };
 
 const LABELS: Record<string, string> = {
@@ -18,11 +23,72 @@ const LABELS: Record<string, string> = {
 interface SentimentChartProps {
   from?: string;
   to?: string;
+  onFromChange?: (from: string) => void;
+  onToChange?: (to: string) => void;
 }
 
-export const SentimentChart = ({ from, to }: SentimentChartProps) => {
+export const SentimentChart = ({
+  from: externalFrom,
+  to: externalTo,
+  onFromChange,
+  onToChange,
+}: SentimentChartProps) => {
+  const navigate = useNavigate();
+  const defaultRange = useMemo(() => getCurrentWeekRange(), []);
+  const [localFrom, setLocalFrom] = useState(externalFrom ?? defaultRange.from);
+  const [localTo, setLocalTo] = useState(externalTo ?? defaultRange.to);
+
+  const from = externalFrom ?? localFrom;
+  const to = externalTo ?? localTo;
   const { data, isLoading, isError } = useSentimentStats(from, to);
 
+  const handleFromChange = useCallback(
+    (val: string) => {
+      setLocalFrom(val);
+      onFromChange?.(val);
+    },
+    [onFromChange],
+  );
+
+  const handleToChange = useCallback(
+    (val: string) => {
+      setLocalTo(val);
+      onToChange?.(val);
+    },
+    [onToChange],
+  );
+
+  const handlePieClick = useCallback(
+    (data: { name?: string }) => {
+      if (!data.name) return;
+      const sentimentMap: Record<string, string> = {
+        Позитив: "positive",
+        Нейтрал: "neutral",
+        Негатив: "negative",
+      };
+      const sentiment = sentimentMap[data.name];
+      if (sentiment) {
+        navigate(`/history?sentiment=${sentiment}&from=${from}&to=${to}`);
+      }
+    },
+    [from, to, navigate],
+  );
+
+  const handleLegendClick = useCallback(
+    (data: { value?: string }) => {
+      if (!data.value) return;
+      const sentimentMap: Record<string, string> = {
+        Позитив: "positive",
+        Нейтрал: "neutral",
+        Негатив: "negative",
+      };
+      const sentiment = sentimentMap[data.value];
+      if (sentiment) {
+        navigate(`/history?sentiment=${sentiment}&from=${from}&to=${to}`);
+      }
+    },
+    [from, to, navigate],
+  );
   if (isLoading) {
     return (
       <Card>
@@ -60,10 +126,17 @@ export const SentimentChart = ({ from, to }: SentimentChartProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Тональность обращений</CardTitle>
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <CardTitle>Тональность обращений</CardTitle>
+          <div className="flex items-center gap-2">
+            <DatePickerClearable value={from} onChange={handleFromChange} placeholder="С" />
+            <span className="text-muted-foreground">—</span>
+            <DatePickerClearable value={to} onChange={handleToChange} placeholder="По" />
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={250} className="lg:!h-[300px]">
+        <ResponsiveContainer width="100%" height={300} className="lg:!h-[300px]">
           <PieChart>
             <Pie
               data={chartData}
@@ -73,7 +146,12 @@ export const SentimentChart = ({ from, to }: SentimentChartProps) => {
               outerRadius={100}
               paddingAngle={2}
               dataKey="value"
-              label={({ name, percent }) => `${name} ${(percent ?? 0 * 100).toFixed(0)}%`}
+              label={({ name, percent }) => {
+                const pct = (percent ?? 0) * 100;
+                return `${name} ${pct.toFixed(0)}%`;
+              }}
+              onClick={handlePieClick}
+              className="cursor-pointer"
             >
               {chartData.map((entry, index) => (
                 <Cell key={index} fill={entry.color} />
@@ -86,7 +164,7 @@ export const SentimentChart = ({ from, to }: SentimentChartProps) => {
                 return [`${num} (${((num / total) * 100).toFixed(1)}%)`, "Обращений"];
               }}
             />
-            <Legend />
+            <Legend onClick={handleLegendClick} wrapperStyle={{ cursor: "pointer" }} />
           </PieChart>
         </ResponsiveContainer>
       </CardContent>
