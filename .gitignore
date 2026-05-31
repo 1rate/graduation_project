@@ -43,3 +43,6 @@ vite.config.ts.timestamp-*
 backend/data/category/rubert_tiny2_onnx/model.onnx
 backend/data/sentiment/rubert_tiny2_onnx/model.onnx
 backend/test_models/model/transformer/model.safetensors
+
+*.onnx
+*.safetensors
