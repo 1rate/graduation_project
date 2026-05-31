@@ -1,0 +1,555 @@
+openapi: 3.1.0
+info:
+  title: Diplom Sentiment & Categorization API
+  version: 0.2.0
+  description: |
+    Read & write API for the diplom message-processing pipeline.
+    All traffic goes through the nginx gateway on port 80.
+
+    Services behind the gateway:
+    - `auth` — login (JWT), user management, category catalog & assignment.
+    - `ingest` — accepts user appeals (text or audio).
+    - `analytics` — search, message details, aggregations (admin-only).
+
+    ## Authentication
+    All endpoints except `POST /api/v1/auth/login` and `/healthz` require a
+    `Authorization: Bearer <jwt>` header. The JWT is HS256-signed and carries
+    `{sub, username, role}`. Two roles: `user` (may only submit appeals) and
+    `admin` (full access — user management, category assignment, analytics).
+
+servers:
+  - url: http://localhost
+    description: nginx gateway (single entry point)
+
+tags:
+  - name: auth
+  - name: admin
+  - name: ingest
+  - name: search
+  - name: stats
+
+paths:
+  /api/v1/auth/login:
+    post:
+      tags: [auth]
+      summary: Exchange username + password for a JWT
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        '200':
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [token, user]
+                properties:
+                  token: { type: string, description: HS256 JWT }
+                  user:  { $ref: '#/components/schemas/User' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v1/categories:
+    get:
+      tags: [admin]
+      summary: Fixed catalog of 30 categories (all business domains)
+      responses:
+        '200':
+          description: Category catalog
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [categories]
+                properties:
+                  categories:
+                    type: array
+                    items: { $ref: '#/components/schemas/CategoryItem' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/v1/admin/users:
+    post:
+      tags: [admin]
+      summary: Create a user (admin only)
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409':
+          description: Username already exists
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateUserRequest' }
+    get:
+      tags: [admin]
+      summary: List all users (admin only)
+      responses:
+        '200':
+          description: Users
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [users]
+                properties:
+                  users:
+                    type: array
+                    items: { $ref: '#/components/schemas/User' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /api/v1/admin/users/{id}:
+    get:
+      tags: [admin]
+      summary: User details with assigned categories (admin only)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: User with assigned categories
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserWithCategories' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/admin/users/{id}/categories:
+    put:
+      tags: [admin]
+      summary: Replace the categories assigned to a user (admin only)
+      description: |
+        Sets exactly which categories the categorizer may use for this user's
+        appeals. Appeals the model cannot confidently place get `без категории`.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [category_ids]
+              properties:
+                category_ids:
+                  type: array
+                  items: { type: integer }
+      responses:
+        '200':
+          description: Updated assignment
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, categories]
+                properties:
+                  id: { type: string, format: uuid }
+                  categories:
+                    type: array
+                    items: { $ref: '#/components/schemas/CategoryItem' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/messages:
+    post:
+      tags: [ingest]
+      summary: Submit a user appeal (text or audio)
+      description: |
+        Multipart request. `source=text` requires field `text`.
+        `source=audio` requires field `audio` (file). Returns the new message id.
+        The appeal is bound to the authenticated user (`user_id` from the JWT).
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [source]
+              properties:
+                source:
+                  type: string
+                  enum: [text, audio]
+                text:
+                  type: string
+                  description: Required when source=text
+                audio:
+                  type: string
+                  format: binary
+                  description: Required when source=audio
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [message_id, status]
+                properties:
+                  message_id:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    example: pending
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /healthz:
+    get:
+      summary: Liveness probe
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+
+  /api/v1/search:
+    get:
+      tags: [search]
+      summary: Full-text search over indexed messages (admin only)
+      parameters:
+        - in: query
+          name: q
+          schema: { type: string }
+          description: Search phrase. Empty = match all.
+        - $ref: '#/components/parameters/UserID'
+        - in: query
+          name: from
+          schema: { type: string, format: date-time }
+          description: Lower bound on received_at (RFC3339).
+        - in: query
+          name: to
+          schema: { type: string, format: date-time }
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 1, default: 1 }
+        - in: query
+          name: size
+          schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+      responses:
+        '200':
+          description: Page of hits
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [total, page, size, items]
+                properties:
+                  total: { type: integer, format: int64 }
+                  page:  { type: integer }
+                  size:  { type: integer }
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/IndexedMessage' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /api/v1/messages/{id}:
+    get:
+      tags: [search]
+      summary: Get a single message with sentiment & category (admin only)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Message details
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MessageDetails' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/v1/stats/sentiment:
+    get:
+      tags: [stats]
+      summary: Distribution of sentiment labels (admin only)
+      parameters:
+        - $ref: '#/components/parameters/UserID'
+        - $ref: '#/components/parameters/From'
+        - $ref: '#/components/parameters/To'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TermsAggregation' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /api/v1/stats/categories:
+    get:
+      tags: [stats]
+      summary: Distribution of categories (admin only)
+      parameters:
+        - $ref: '#/components/parameters/UserID'
+        - $ref: '#/components/parameters/From'
+        - $ref: '#/components/parameters/To'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TermsAggregation' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /api/v1/stats/timeline:
+    get:
+      tags: [stats]
+      summary: Time-bucketed counts split by sentiment or category (admin only)
+      parameters:
+        - in: query
+          name: bucket
+          schema: { type: string, enum: [hour, day], default: day }
+        - in: query
+          name: metric
+          schema: { type: string, enum: [sentiment, category], default: sentiment }
+        - $ref: '#/components/parameters/UserID'
+        - $ref: '#/components/parameters/From'
+        - $ref: '#/components/parameters/To'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Timeline' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+# Applies to every operation unless overridden with `security: []`.
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    From:
+      in: query
+      name: from
+      schema: { type: string, format: date-time }
+    To:
+      in: query
+      name: to
+      schema: { type: string, format: date-time }
+    UserID:
+      in: query
+      name: user_id
+      description: Scope results to a single user's appeals. Omit for all users.
+      schema: { type: string, format: uuid }
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Unauthorized:
+      description: Missing or invalid JWT
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Forbidden:
+      description: Authenticated but lacking the required role
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username: { type: string }
+        password: { type: string }
+
+    CreateUserRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username: { type: string }
+        password: { type: string }
+        role:
+          type: string
+          enum: [user, admin]
+          default: user
+          description: Defaults to `user` when omitted.
+
+    User:
+      type: object
+      required: [id, username, role, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        username: { type: string }
+        role:
+          type: string
+          enum: [user, admin]
+        created_at: { type: string, format: date-time }
+
+    CategoryItem:
+      description: One entry of the fixed 30-category catalog.
+      type: object
+      required: [id, code, name, domain]
+      properties:
+        id: { type: integer }
+        code: { type: string, example: billing }
+        name: { type: string, example: Оплата и биллинг }
+        domain: { type: string, example: финансы }
+
+    UserWithCategories:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          required: [categories]
+          properties:
+            categories:
+              type: array
+              items: { $ref: '#/components/schemas/CategoryItem' }
+              description: Categories assigned to this user by an admin.
+
+    Sentiment:
+      type: object
+      required: [label, score, model_version]
+      properties:
+        label:
+          type: string
+          enum: [positive, neutral, negative]
+        score: { type: number, format: float }
+        model_version: { type: string }
+
+    Category:
+      type: object
+      required: [category, score, model_version]
+      properties:
+        category: { type: string }
+        score: { type: number, format: float }
+        model_version: { type: string }
+
+    IndexedMessage:
+      description: Document as stored in Elasticsearch (used by /search).
+      type: object
+      required: [message_id, source, text, received_at]
+      properties:
+        message_id: { type: string, format: uuid }
+        user_id:
+          type: string
+          format: uuid
+          description: Owner of the appeal.
+        source:
+          type: string
+          enum: [text, audio]
+        text: { type: string }
+        received_at: { type: string, format: date-time }
+        sentiment: { $ref: '#/components/schemas/Sentiment' }
+        category:  { $ref: '#/components/schemas/Category' }
+
+    MessageDetails:
+      description: Joined view from PostgreSQL (used by /messages/{id}).
+      type: object
+      required: [id, source, status, text, received_at, updated_at]
+      properties:
+        id: { type: string, format: uuid }
+        user_id:
+          type: string
+          format: uuid
+          description: Owner of the appeal.
+        source: { type: string, enum: [text, audio] }
+        status:
+          type: string
+          enum: [pending, transcribed, enriched, failed]
+        text: { type: string }
+        audio_object:
+          type: string
+          description: MinIO object key (only present when source=audio).
+        audio_url:
+          type: string
+          format: uri
+          description: |
+            Presigned GET URL to download the audio blob directly from MinIO.
+            Valid for ~15 minutes. Only present when source=audio.
+        received_at: { type: string, format: date-time }
+        updated_at:  { type: string, format: date-time }
+        sentiment: { $ref: '#/components/schemas/Sentiment' }
+        category:  { $ref: '#/components/schemas/Category' }
+
+    AggBucket:
+      type: object
+      required: [key, count]
+      properties:
+        key: { type: string }
+        count: { type: integer, format: int64 }
+
+    TermsAggregation:
+      type: object
+      required: [buckets]
+      properties:
+        buckets:
+          type: array
+          items: { $ref: '#/components/schemas/AggBucket' }
+
+    TimelinePoint:
+      type: object
+      required: [bucket, total, counts]
+      properties:
+        bucket: { type: string, format: date-time }
+        total:  { type: integer, format: int64 }
+        counts:
+          type: object
+          additionalProperties: { type: integer, format: int64 }
+
+    Timeline:
+      type: object
+      required: [bucket, metric, points]
+      properties:
+        bucket: { type: string, enum: [hour, day] }
+        metric: { type: string, enum: [sentiment, category] }
+        points:
+          type: array
+          items: { $ref: '#/components/schemas/TimelinePoint' }

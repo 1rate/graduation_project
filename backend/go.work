@@ -1,0 +1,9 @@
+go 1.23
+
+use (
+	./pkg
+	./services/analytics
+	./services/auth
+	./services/indexer
+	./services/ingest
+)

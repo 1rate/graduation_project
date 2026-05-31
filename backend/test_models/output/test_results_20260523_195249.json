@@ -1,0 +1,49 @@
+{
+  "timestamp": "2026-05-23T19:52:49.413609",
+  "model": "blanchefort/rubert-base-cased-sentiment",
+  "total": 20,
+  "passed": 19,
+  "failed": 1,
+  "accuracy": 95.0,
+  "avg_time_ms": 40.89251756668091,
+  "load_time_s": 23.289337873458862,
+  "by_category": {
+    "грубый негатив": {
+      "total": 4,
+      "passed": 4
+    },
+    "вежливый негатив": {
+      "total": 4,
+      "passed": 4
+    },
+    "негатив с контекстом": {
+      "total": 2,
+      "passed": 2
+    },
+    "чистый вопрос": {
+      "total": 4,
+      "passed": 4
+    },
+    "длинный диалог": {
+      "total": 1,
+      "passed": 1
+    },
+    "позитив": {
+      "total": 3,
+      "passed": 3
+    },
+    "нейтральный факт": {
+      "total": 2,
+      "passed": 1
+    }
+  },
+  "errors": [
+    {
+      "text": "в целом неплохо, но могли бы и быстрее",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 0.9,
+      "category": "нейтральный факт"
+    }
+  ]
+}

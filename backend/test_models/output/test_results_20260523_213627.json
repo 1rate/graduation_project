@@ -1,0 +1,873 @@
+{
+  "timestamp": "2026-05-23T21:36:27.257816",
+  "model": "sentence-transformer + logistic regression",
+  "total": 260,
+  "passed": 187,
+  "failed": 73,
+  "accuracy": 71.92307692307692,
+  "avg_time_ms": 4.911950001349816,
+  "load_time_s": 0.3628201484680176,
+  "by_category": {
+    "грубый негатив": {
+      "total": 25,
+      "passed": 23
+    },
+    "вежливый негатив": {
+      "total": 26,
+      "passed": 23
+    },
+    "негатив с контекстом": {
+      "total": 20,
+      "passed": 16
+    },
+    "чистый вопрос": {
+      "total": 20,
+      "passed": 20
+    },
+    "длинный диалог": {
+      "total": 6,
+      "passed": 6
+    },
+    "длинный диалог с негативом": {
+      "total": 4,
+      "passed": 4
+    },
+    "длинный диалог вопрос": {
+      "total": 1,
+      "passed": 1
+    },
+    "длинный диалог от оператора": {
+      "total": 1,
+      "passed": 0
+    },
+    "длинный позитив": {
+      "total": 1,
+      "passed": 1
+    },
+    "длинный негатив ожидание": {
+      "total": 1,
+      "passed": 1
+    },
+    "длинный техподдержка": {
+      "total": 1,
+      "passed": 1
+    },
+    "длинный банк": {
+      "total": 1,
+      "passed": 1
+    },
+    "длинный банк экстренный": {
+      "total": 1,
+      "passed": 0
+    },
+    "длинный телеком": {
+      "total": 1,
+      "passed": 0
+    },
+    "длинный жкх": {
+      "total": 1,
+      "passed": 1
+    },
+    "длинный доставка еды": {
+      "total": 1,
+      "passed": 0
+    },
+    "позитив": {
+      "total": 30,
+      "passed": 11
+    },
+    "нейтральный факт": {
+      "total": 30,
+      "passed": 22
+    },
+    "смешанный": {
+      "total": 7,
+      "passed": 7
+    },
+    "смешанный ближе к негативу": {
+      "total": 3,
+      "passed": 3
+    },
+    "смешанный с позитивом": {
+      "total": 1,
+      "passed": 1
+    },
+    "позитив+негатив": {
+      "total": 2,
+      "passed": 1
+    },
+    "нейтральный с ноткой негатива": {
+      "total": 1,
+      "passed": 1
+    },
+    "нейтральный": {
+      "total": 2,
+      "passed": 1
+    },
+    "нейтрально-негативный": {
+      "total": 1,
+      "passed": 1
+    },
+    "нейтральная оценка": {
+      "total": 1,
+      "passed": 1
+    },
+    "сленг нейтральный": {
+      "total": 2,
+      "passed": 2
+    },
+    "позитив с уточнением": {
+      "total": 1,
+      "passed": 0
+    },
+    "банк экстренный": {
+      "total": 1,
+      "passed": 0
+    },
+    "банк ошибка": {
+      "total": 1,
+      "passed": 0
+    },
+    "банк мошенники": {
+      "total": 1,
+      "passed": 1
+    },
+    "банк простой": {
+      "total": 1,
+      "passed": 1
+    },
+    "банк техпроблема": {
+      "total": 1,
+      "passed": 1
+    },
+    "телеком тариф": {
+      "total": 1,
+      "passed": 0
+    },
+    "телеком авария": {
+      "total": 1,
+      "passed": 1
+    },
+    "жкх авария": {
+      "total": 1,
+      "passed": 1
+    },
+    "жкх ошибка": {
+      "total": 1,
+      "passed": 1
+    },
+    "жкх показания": {
+      "total": 1,
+      "passed": 0
+    },
+    "маркетплейс": {
+      "total": 1,
+      "passed": 1
+    },
+    "маркетплейс возврат": {
+      "total": 1,
+      "passed": 1
+    },
+    "маркетплейс брак": {
+      "total": 1,
+      "passed": 1
+    },
+    "доставка еды": {
+      "total": 1,
+      "passed": 0
+    },
+    "доставка еды скандал": {
+      "total": 1,
+      "passed": 1
+    },
+    "фастфуд": {
+      "total": 1,
+      "passed": 1
+    },
+    "маркетплейс ошибка": {
+      "total": 1,
+      "passed": 1
+    },
+    "банк кредит": {
+      "total": 1,
+      "passed": 0
+    },
+    "телеком блокировка": {
+      "total": 1,
+      "passed": 0
+    },
+    "госуслуги": {
+      "total": 2,
+      "passed": 2
+    },
+    "телеком баланс": {
+      "total": 1,
+      "passed": 1
+    },
+    "телеком навязывание": {
+      "total": 1,
+      "passed": 1
+    },
+    "телеком качество": {
+      "total": 1,
+      "passed": 1
+    },
+    "транспорт": {
+      "total": 1,
+      "passed": 0
+    },
+    "ржд": {
+      "total": 1,
+      "passed": 1
+    },
+    "авиа": {
+      "total": 1,
+      "passed": 1
+    },
+    "госуслуги техпроблема": {
+      "total": 1,
+      "passed": 1
+    },
+    "лояльность": {
+      "total": 1,
+      "passed": 1
+    },
+    "банк позитив": {
+      "total": 1,
+      "passed": 0
+    },
+    "эмодзи позитив": {
+      "total": 1,
+      "passed": 0
+    },
+    "эмодзи негатив": {
+      "total": 1,
+      "passed": 1
+    },
+    "опечатки пропуски": {
+      "total": 1,
+      "passed": 0
+    },
+    "капс позитив": {
+      "total": 1,
+      "passed": 0
+    },
+    "капс негатив": {
+      "total": 1,
+      "passed": 0
+    },
+    "сленг позитив": {
+      "total": 1,
+      "passed": 0
+    },
+    "сленг негатив": {
+      "total": 1,
+      "passed": 1
+    },
+    "эмодзи сарказм": {
+      "total": 1,
+      "passed": 1
+    },
+    "черный юмор": {
+      "total": 1,
+      "passed": 1
+    },
+    "эмодзи упрощенный": {
+      "total": 1,
+      "passed": 0
+    },
+    "эмодзи вопрос": {
+      "total": 1,
+      "passed": 1
+    },
+    "сленг дружеский": {
+      "total": 1,
+      "passed": 0
+    },
+    "сленг": {
+      "total": 9,
+      "passed": 3
+    },
+    "сленг вопрос": {
+      "total": 1,
+      "passed": 1
+    },
+    "короткий позитив": {
+      "total": 1,
+      "passed": 0
+    },
+    "короткий негатив": {
+      "total": 1,
+      "passed": 1
+    },
+    "короткий нейтральный": {
+      "total": 1,
+      "passed": 1
+    },
+    "разочарование слабое": {
+      "total": 1,
+      "passed": 1
+    },
+    "сарказм": {
+      "total": 1,
+      "passed": 0
+    },
+    "сарказм с эмодзи": {
+      "total": 1,
+      "passed": 0
+    },
+    "сдержанный": {
+      "total": 1,
+      "passed": 1
+    },
+    "апатия": {
+      "total": 1,
+      "passed": 0
+    },
+    "короткий": {
+      "total": 1,
+      "passed": 0
+    },
+    "сленг усиленный": {
+      "total": 1,
+      "passed": 1
+    },
+    "сленг молодежный": {
+      "total": 1,
+      "passed": 1
+    },
+    "крик о помощи": {
+      "total": 1,
+      "passed": 0
+    },
+    "просьба": {
+      "total": 1,
+      "passed": 0
+    },
+    "вежливая просьба": {
+      "total": 1,
+      "passed": 1
+    },
+    "извинительный негатив": {
+      "total": 1,
+      "passed": 1
+    },
+    "вежливый позитив": {
+      "total": 1,
+      "passed": 0
+    }
+  },
+  "errors": [
+    {
+      "text": "идиоты, которые это придумали",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "грубый негатив"
+    },
+    {
+      "text": "такое ощущение, что вас обезьяны тренировали",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 0.3333333432674408,
+      "category": "грубый негатив"
+    },
+    {
+      "text": "откровенно слабо, ожидал большего",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "вежливый негатив"
+    },
+    {
+      "text": "прошу принять меры, так больше продолжаться не может",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 0.5,
+      "category": "вежливый негатив"
+    },
+    {
+      "text": "в целом неплохо, но конкретно этот заказ испортил впечатление",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "негатив с контекстом"
+    },
+    {
+      "text": "раньше все было отлично, а сейчас кошмар",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "негатив с контекстом"
+    },
+    {
+      "text": "ждал курьера 4 часа, хотя обещали к 12",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 0.8692232966423035,
+      "category": "негатив с контекстом"
+    },
+    {
+      "text": "перезвоните, пожалуйста. у меня проблемы с аккаунтом",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "негатив с контекстом"
+    },
+    {
+      "text": "Здравствуйте, меня зовут Елена, я из службы качества. Мы ценим ваше мнение. Не могли бы вы уделить 2 минуты опросу о сегодняшнем звонке?",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 0.5,
+      "category": "длинный диалог от оператора"
+    },
+    {
+      "text": "Алло, это Сбер? Я потерял карту. Нужно срочно заблокировать. Я нахожусь в командировке.",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 1.0,
+      "category": "длинный банк экстренный"
+    },
+    {
+      "text": "Здравствуйте, я хочу подключить домашний интернет. Мне нужна скорость от 100 Мбит. А есть ли акция для новых абонентов?",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 1.0,
+      "category": "длинный телеком"
+    },
+    {
+      "text": "Здравствуйте, я заказал пиццу 40 минут назад. Статус 'готовится'. Когда привезут? Я голодный",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 1.0,
+      "category": "длинный доставка еды"
+    },
+    {
+      "text": "курьер молодец, приехал вовремя и вежливый",
+      "expected": "positive",
+      "got": "negative",
+      "score": 0.3333333432674408,
+      "category": "позитив"
+    },
+    {
+      "text": "отличная работа, все четко и быстро",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 0.3333333432674408,
+      "category": "позитив"
+    },
+    {
+      "text": "великолепный сервис и отношение к клиентам",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 0.3333333432674408,
+      "category": "позитив"
+    },
+    {
+      "text": "очень порадовала упаковка и скорость обработки",
+      "expected": "positive",
+      "got": "negative",
+      "score": 0.3333333432674408,
+      "category": "позитив"
+    },
+    {
+      "text": "спасибо, вы сделали мой день лучше",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "позитив"
+    },
+    {
+      "text": "всё пришло в идеальном состоянии, спасибо",
+      "expected": "positive",
+      "got": "negative",
+      "score": 0.3333333432674408,
+      "category": "позитив"
+    },
+    {
+      "text": "лучший сервис доставки в городе, честно",
+      "expected": "positive",
+      "got": "negative",
+      "score": 1.0,
+      "category": "позитив"
+    },
+    {
+      "text": "поддержка ответила за 2 секунды, круто",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "позитив"
+    },
+    {
+      "text": "заказ пришел раньше срока, приятный сюрприз",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "позитив"
+    },
+    {
+      "text": "оператор вежливая, всё объяснила, спасибо Анастасии",
+      "expected": "positive",
+      "got": "negative",
+      "score": 0.3333333432674408,
+      "category": "позитив"
+    },
+    {
+      "text": "вернули деньги за брак без вопросов, уважаю",
+      "expected": "positive",
+      "got": "negative",
+      "score": 1.0,
+      "category": "позитив"
+    },
+    {
+      "text": "понравилось, что можно отслеживать курьера на карте",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "позитив"
+    },
+    {
+      "text": "спасибо за бонусы и скидку постоянному клиенту",
+      "expected": "positive",
+      "got": "negative",
+      "score": 0.3333333432674408,
+      "category": "позитив"
+    },
+    {
+      "text": "отличное приложение, всё понятно и без лагов",
+      "expected": "positive",
+      "got": "negative",
+      "score": 0.3333333432674408,
+      "category": "позитив"
+    },
+    {
+      "text": "быстро решили мою проблему, 5 баллов",
+      "expected": "positive",
+      "got": "negative",
+      "score": 0.3333333432674408,
+      "category": "позитив"
+    },
+    {
+      "text": "лучшая техподдержка за последние годы",
+      "expected": "positive",
+      "got": "negative",
+      "score": 0.3333333432674408,
+      "category": "позитив"
+    },
+    {
+      "text": "супер, продлите подписку еще на месяц",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "позитив"
+    },
+    {
+      "text": "вау эффект, спасибо за подарок в заказе",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "позитив"
+    },
+    {
+      "text": "я ваш фанат, всё супер",
+      "expected": "positive",
+      "got": "negative",
+      "score": 0.3333333432674408,
+      "category": "позитив"
+    },
+    {
+      "text": "упаковка стандартная, без нареканий",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 1.0,
+      "category": "нейтральный факт"
+    },
+    {
+      "text": "всё штатно, претензий нет",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 1.0,
+      "category": "нейтральный факт"
+    },
+    {
+      "text": "денежные средства списаны",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 0.6788532137870789,
+      "category": "нейтральный факт"
+    },
+    {
+      "text": "сообщение отправлено, но не прочитано",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 1.0,
+      "category": "нейтральный факт"
+    },
+    {
+      "text": "услуга оказана в полном объеме",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 0.7676774263381958,
+      "category": "нейтральный факт"
+    },
+    {
+      "text": "чек пришел на почту, всё ок",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 1.0,
+      "category": "нейтральный факт"
+    },
+    {
+      "text": "интерфейс привычный, но устаревший",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 0.5,
+      "category": "нейтральный факт"
+    },
+    {
+      "text": "без восторга, но и не провал",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 1.0,
+      "category": "нейтральный факт"
+    },
+    {
+      "text": "нормально, но переплачивать не буду",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 0.5,
+      "category": "нейтральный"
+    },
+    {
+      "text": "так себе впечатление, но спасибо что попытались",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 0.3333333432674408,
+      "category": "вежливый негатив"
+    },
+    {
+      "text": "вы молодцы, но брак есть брак",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "позитив+негатив"
+    },
+    {
+      "text": "всё отлично, только чек не нужен",
+      "expected": "positive",
+      "got": "negative",
+      "score": 1.0,
+      "category": "позитив с уточнением"
+    },
+    {
+      "text": "добрый день, это банк? у меня украли телефон, заблокируйте карту",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 1.0,
+      "category": "банк экстренный"
+    },
+    {
+      "text": "здравствуйте, почему списали 5000 рублей за обслуживание? у меня пенсионная карта",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "банк ошибка"
+    },
+    {
+      "text": "здравствуйте, это Ростелеком? хочу сменить тариф на 350 рублей",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 1.0,
+      "category": "телеком тариф"
+    },
+    {
+      "text": "я хочу передать показания счетчика 98765",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 1.0,
+      "category": "жкх показания"
+    },
+    {
+      "text": "самокат, где мой заказ? 3 часа висит 'готовится'",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "доставка еды"
+    },
+    {
+      "text": "здравствуйте, я хочу закрыть кредит досрочно, сумма 150 тысяч",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 1.0,
+      "category": "банк кредит"
+    },
+    {
+      "text": "алло, у меня украли сим-карту, заблокируйте номер",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 1.0,
+      "category": "телеком блокировка"
+    },
+    {
+      "text": "у меня льготный проездной не работает валидатор",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 1.0,
+      "category": "транспорт"
+    },
+    {
+      "text": "спасибо поддержке Т-Банка, вернули кэшбэк за 5 минут, вы лучшие",
+      "expected": "positive",
+      "got": "negative",
+      "score": 1.0,
+      "category": "банк позитив"
+    },
+    {
+      "text": "всё супер 😍🔥",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "эмодзи позитив"
+    },
+    {
+      "text": "г‌д‌е‌ ‌м‌о‌й‌ ‌з‌а‌к‌а‌з‌?‌ ‌2‌ ‌н‌е‌д‌е‌л‌и‌ ‌ж‌д‌у‌",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "опечатки пропуски"
+    },
+    {
+      "text": "СПАСИБО БОЛЬШОЕ ВЫ ЛУЧШИЕ",
+      "expected": "positive",
+      "got": "negative",
+      "score": 0.3333333432674408,
+      "category": "капс позитив"
+    },
+    {
+      "text": "ВЫ КТО ТАКИЕ ВООБЩЕ??? ВЕРНИТЕ ДЕНЬГИ",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "капс негатив"
+    },
+    {
+      "text": "зашло",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "сленг позитив"
+    },
+    {
+      "text": "👍👍👍 всё ок",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "эмодзи упрощенный"
+    },
+    {
+      "text": "спс, бро",
+      "expected": "positive",
+      "got": "negative",
+      "score": 1.0,
+      "category": "сленг дружеский"
+    },
+    {
+      "text": "красава",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "сленг"
+    },
+    {
+      "text": "легенда",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "сленг"
+    },
+    {
+      "text": "люблю",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "короткий позитив"
+    },
+    {
+      "text": "ага, щас",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "сарказм"
+    },
+    {
+      "text": "конечно, ждите 😂",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "сарказм с эмодзи"
+    },
+    {
+      "text": "да похрен",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "апатия"
+    },
+    {
+      "text": "класс",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "короткий"
+    },
+    {
+      "text": "улет",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "сленг"
+    },
+    {
+      "text": "кайф",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 0.5,
+      "category": "сленг"
+    },
+    {
+      "text": "жесть",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "сленг"
+    },
+    {
+      "text": "рофл",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 1.0,
+      "category": "сленг"
+    },
+    {
+      "text": "сос",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 1.0,
+      "category": "крик о помощи"
+    },
+    {
+      "text": "хелп",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 0.5,
+      "category": "просьба"
+    },
+    {
+      "text": "спасибо и простите за беспокойство",
+      "expected": "positive",
+      "got": "negative",
+      "score": 1.0,
+      "category": "вежливый позитив"
+    }
+  ]
+}

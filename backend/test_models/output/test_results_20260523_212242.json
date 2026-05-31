@@ -1,0 +1,114 @@
+{
+  "timestamp": "2026-05-23T21:22:42.906876",
+  "model": "sentence-transformer + logistic regression",
+  "total": 105,
+  "passed": 97,
+  "failed": 8,
+  "accuracy": 92.38095238095238,
+  "avg_time_ms": 5.906604585193452,
+  "load_time_s": 0.4368574619293213,
+  "by_category": {
+    "грубый негатив": {
+      "total": 15,
+      "passed": 13
+    },
+    "вежливый негатив": {
+      "total": 15,
+      "passed": 15
+    },
+    "негатив с контекстом": {
+      "total": 10,
+      "passed": 10
+    },
+    "чистый вопрос": {
+      "total": 15,
+      "passed": 15
+    },
+    "длинный диалог": {
+      "total": 6,
+      "passed": 6
+    },
+    "длинный диалог с негативом": {
+      "total": 4,
+      "passed": 4
+    },
+    "позитив": {
+      "total": 15,
+      "passed": 15
+    },
+    "нейтральный факт": {
+      "total": 15,
+      "passed": 13
+    },
+    "смешанный": {
+      "total": 6,
+      "passed": 4
+    },
+    "смешанный ближе к негативу": {
+      "total": 3,
+      "passed": 2
+    },
+    "смешанный с позитивом": {
+      "total": 1,
+      "passed": 0
+    }
+  },
+  "errors": [
+    {
+      "text": "ваша доставка полное дермище",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 0.3562251251382597,
+      "category": "грубый негатив"
+    },
+    {
+      "text": "ваш сервис просто днище",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 0.40747399901645265,
+      "category": "грубый негатив"
+    },
+    {
+      "text": "упаковка стандартная, без нареканий",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 0.538127974839821,
+      "category": "нейтральный факт"
+    },
+    {
+      "text": "обычная доставка, без сюрпризов",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 0.39122346977968564,
+      "category": "нейтральный факт"
+    },
+    {
+      "text": "неплохо, но не отлично",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 0.43873667770897196,
+      "category": "смешанный"
+    },
+    {
+      "text": "вроде нормально, но осадочек остался",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 0.45880688586564794,
+      "category": "смешанный"
+    },
+    {
+      "text": "качество супер, доставка ужас",
+      "expected": "negative",
+      "got": "positive",
+      "score": 0.4827197112812389,
+      "category": "смешанный ближе к негативу"
+    },
+    {
+      "text": "спасибо большое! только одна просьба",
+      "expected": "neutral",
+      "got": "positive",
+      "score": 0.4264993794417786,
+      "category": "смешанный с позитивом"
+    }
+  ]
+}

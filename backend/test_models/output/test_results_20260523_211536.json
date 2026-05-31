@@ -1,0 +1,184 @@
+{
+  "timestamp": "2026-05-23T21:15:36.717665",
+  "model": "sentence-transformer + logistic regression",
+  "total": 105,
+  "passed": 87,
+  "failed": 18,
+  "accuracy": 82.85714285714286,
+  "avg_time_ms": 6.239863804408483,
+  "load_time_s": 0.45998716354370117,
+  "by_category": {
+    "грубый негатив": {
+      "total": 15,
+      "passed": 14
+    },
+    "вежливый негатив": {
+      "total": 15,
+      "passed": 15
+    },
+    "негатив с контекстом": {
+      "total": 10,
+      "passed": 10
+    },
+    "чистый вопрос": {
+      "total": 15,
+      "passed": 15
+    },
+    "длинный диалог": {
+      "total": 6,
+      "passed": 6
+    },
+    "длинный диалог с негативом": {
+      "total": 4,
+      "passed": 4
+    },
+    "позитив": {
+      "total": 15,
+      "passed": 2
+    },
+    "нейтральный факт": {
+      "total": 15,
+      "passed": 13
+    },
+    "смешанный": {
+      "total": 6,
+      "passed": 4
+    },
+    "смешанный ближе к негативу": {
+      "total": 3,
+      "passed": 3
+    },
+    "смешанный с позитивом": {
+      "total": 1,
+      "passed": 1
+    }
+  },
+  "errors": [
+    {
+      "text": "ваша доставка полное дермище",
+      "expected": "negative",
+      "got": "neutral",
+      "score": 0.4361870928855701,
+      "category": "грубый негатив"
+    },
+    {
+      "text": "отличная доставка!",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 0.478585281541238,
+      "category": "позитив"
+    },
+    {
+      "text": "мне очень понравилось качество вашей продукции все супер",
+      "expected": "positive",
+      "got": "negative",
+      "score": 0.37255755449892636,
+      "category": "позитив"
+    },
+    {
+      "text": "спасибо за быструю доставку, молодцы",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 0.36083417374279153,
+      "category": "позитив"
+    },
+    {
+      "text": "прекрасный сервис, буду рекомендовать друзьям",
+      "expected": "positive",
+      "got": "negative",
+      "score": 0.38951191532147533,
+      "category": "позитив"
+    },
+    {
+      "text": "очень доволен покупкой, все отлично",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 0.3756539238240226,
+      "category": "позитив"
+    },
+    {
+      "text": "курс молодцы, приехали вовремя и вежливые",
+      "expected": "positive",
+      "got": "negative",
+      "score": 0.3932665582543033,
+      "category": "позитив"
+    },
+    {
+      "text": "отличная работа, все четко и быстро",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 0.3508441526856211,
+      "category": "позитив"
+    },
+    {
+      "text": "все супер, качество на высоте",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 0.3485090760291657,
+      "category": "позитив"
+    },
+    {
+      "text": "браво! превзошли ожидания",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 0.43504557805262367,
+      "category": "позитив"
+    },
+    {
+      "text": "великолепный сервис и отношение к клиентам",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 0.39945328461161766,
+      "category": "позитив"
+    },
+    {
+      "text": "очень порадовала упаковка и скорость обработки",
+      "expected": "positive",
+      "got": "negative",
+      "score": 0.42830373792382814,
+      "category": "позитив"
+    },
+    {
+      "text": "рекомендую всем, отличный магазин",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 0.3995803238909507,
+      "category": "позитив"
+    },
+    {
+      "text": "спасибо, вы сделали мой день лучше",
+      "expected": "positive",
+      "got": "neutral",
+      "score": 0.4598864184872139,
+      "category": "позитив"
+    },
+    {
+      "text": "упаковка стандартная, без нареканий",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 0.6131407337964955,
+      "category": "нейтральный факт"
+    },
+    {
+      "text": "обычная доставка, без сюрпризов",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 0.4719867540125149,
+      "category": "нейтральный факт"
+    },
+    {
+      "text": "неплохо, но не отлично",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 0.5025453360741727,
+      "category": "смешанный"
+    },
+    {
+      "text": "вроде нормально, но осадочек остался",
+      "expected": "neutral",
+      "got": "negative",
+      "score": 0.49402952189616833,
+      "category": "смешанный"
+    }
+  ]
+}
