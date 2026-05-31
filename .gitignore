@@ -38,3 +38,8 @@ next-env.d.ts
 
 # Vite
 vite.config.ts.timestamp-*
+
+# Models
+backend/data/category/rubert_tiny2_onnx/model.onnx
+backend/data/sentiment/rubert_tiny2_onnx/model.onnx
+backend/test_models/model/transformer/model.safetensors
